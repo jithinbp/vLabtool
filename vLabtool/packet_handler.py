@@ -1,5 +1,5 @@
 from commands_proto import *
-import serial,fcntl
+import serial
 
 class Singleton(type):
     _instances = {}
@@ -27,7 +27,6 @@ class Handler(object):
 				self.fd = serial.Serial(self.portname, 9600, stopbits=1, timeout = 0.02)
 				self.fd.read(100)
 				self.fd = serial.Serial(self.portname, 1000000, stopbits=1, timeout = 1.0)
-				#fcntl.flock(self.fd.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
 				if(self.fd.inWaiting()):
 					self.fd.read(1000)
 					self.fd.flush()
@@ -43,7 +42,6 @@ class Handler(object):
 					#self.fd.read(100)
 					self.fd.close()
 					self.fd = serial.Serial(self.BASE_PORT_NAME+str(a), 1000000, stopbits=1, timeout = 0.2)
-					#fcntl.flock(self.fd.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
 					self.portname=self.BASE_PORT_NAME+str(a)
 					self.fd.read(1000)
 					self.fd.flush()

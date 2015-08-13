@@ -1727,7 +1727,7 @@ border-color: rgb(29, 122, 162);
             <item row="2" column="1">
              <widget class="QLabel" name="PVS3_LABEL">
               <property name="text">
-               <string>-5 to 5V</string>
+               <string>0 - 3.3V</string>
               </property>
              </widget>
             </item>
@@ -1787,7 +1787,7 @@ border-color: rgb(29, 122, 162);
             <item row="0" column="1">
              <widget class="QLabel" name="PVS1_LABEL">
               <property name="text">
-               <string>0-3.3V</string>
+               <string>-5 to 5V</string>
               </property>
              </widget>
             </item>

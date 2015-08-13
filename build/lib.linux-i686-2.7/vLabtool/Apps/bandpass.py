@@ -16,7 +16,7 @@ class Handler(QtGui.QFrame,Ui_Form):
 		self.I = interface.Interface()
 		self.CC = ConvenienceClass()
 		#self.funcgen= agilent('192.168.1.3')
-		self.I.configure_trigger(0,0)
+		self.I.configure_trigger(0,'CH1',0)
 		self.looptimer=QtCore.QTimer()
 		self.plot1 = Exp.add2DPlot()
 		self.plot2 = Exp.add2DPlot()
@@ -90,14 +90,13 @@ class Handler(QtGui.QFrame,Ui_Form):
 		a1,f1,p1,o1,chisq1 = self.CC.fitData(x,y)
 		
 		x,y=self.I.fetch_trace(2)
-		#y=y/4.		#REMOVE WHEN USED WITH PROTO 4
 		self.curve2.setData(x,y)
 		a2,f2,p2,o2,chisq2 = self.CC.fitData(x,y,frequency=f1)
 		
 		if a2 and a1:
 			self.msg.setText("Set F:%.1f\tFitted F:%.1f"%(frq,f1))
 			self.freqs.append(f1)
-			self.amps.append(a1)
+			self.amps.append(a1/a2)
 			p2=(p2)
 			p1=(p1)
 			dp=(p2-p1)-360
@@ -128,7 +127,8 @@ class Handler(QtGui.QFrame,Ui_Form):
 if __name__ == "__main__":
 	Exp=Experiment(parent=None,showresult=False)
 	handler = Handler()
-	handler.I.set_gain('CH1',2)	#CHANGE GAIN CHANNEL TO 1 
-	handler.I.set_gain('CH2',2)	#CHANGE GAIN CHANNEL TO 2 
+	handler.I.set_gain('CH1',1)	#CHANGE GAIN 
+	handler.I.set_gain('CH2',1)	#CHANGE GAIN 
 	Exp.addHandler(handler)
 	Exp.run()
+	handler.I.restoreStandalone()

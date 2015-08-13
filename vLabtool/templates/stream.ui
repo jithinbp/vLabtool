@@ -39,7 +39,7 @@ color: rgb(255, 255, 255);</string>
        </property>
        <item>
         <property name="text">
-         <string>get_average_voltage('CH5')</string>
+         <string>get_average_voltage('CH1')</string>
         </property>
        </item>
        <item>
@@ -68,6 +68,37 @@ color: rgb(255, 255, 255);</string>
       <widget class="QPushButton" name="pushButton">
        <property name="text">
         <string>Monitor</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="lastReading">
+       <property name="font">
+        <font>
+         <pointsize>26</pointsize>
+         <weight>75</weight>
+         <italic>true</italic>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Result</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>

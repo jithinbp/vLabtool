@@ -203,7 +203,7 @@ class CustomWidgets:
 			elif self.name=='pvs2':
 				retval=self.I.DAC.__setRawVoltage__(2,val)
 			elif self.name=='pvs3':
-				retval=self.I.DAC.__setRawVoltage__(1,val)
+				retval=self.I.DAC.__setRawVoltage__(0,val)
 			elif self.name=='pcs':
 				retval=self.I.DAC.__setRawVoltage__(0,val)
 

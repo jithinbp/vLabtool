@@ -45,7 +45,9 @@ class Handler(QtGui.QFrame,ConvenienceClass,Ui_Form):
 		#	self.ad.set_voltage(self.nm)
 		#	self.nm+=1
 		#self.Y=np.roll(self.Y,-1)
-		self.Y[self.num]=eval(self.streamfunc,{'I':self.I})	#self.mag.read()[1]
+		val=eval(self.streamfunc,{'I':self.I})
+		self.Y[self.num]=val	#self.mag.read()[1]
+		self.lastReading.setText('%.4f'%(val))
 		try:
 			self.arrow.setPos(self.num,self.Y[self.num])
 		except:

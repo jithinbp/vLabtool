@@ -1,1 +1,1 @@
-recursive-include Labtools/docs *
+recursive-include vLabtool/docs/docs *

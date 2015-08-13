@@ -43,7 +43,7 @@ directInAnalogs = ['AN2','AN3','AN4','CAP','CAPCHARGE','SEN','5V']
 inputRanges={'CH1':[16.5,-16.5],	#Specify inverted channels explicitly by reversing range!!!!!!!!!
 'CH2':[16.5,-16.5],
 'CH3':[-3.3,3.3],					#external gain control analog input
-'I2V':[-3.3,3.3],					#connected to current to voltage convertor
+'I2V':[3.3e-3,-3.3e-3],					#connected to current to voltage convertor
 'V+':[0,36.3],
 'CH4':[0,3.3],'CH5':[0,3.3],'CH6':[0,3.3],'CH7':[0,3.3],
 'SEN':[0,3.3],'CAP':[0,3.3],'AN2':[0,3.3],'AN3':[0,3.3]

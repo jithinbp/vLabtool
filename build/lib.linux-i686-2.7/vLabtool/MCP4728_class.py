@@ -22,22 +22,25 @@ class MCP4728:
 		self.I2C = I2C_class.I2C(self.H)
 		self.SWITCHEDOFF=[0,0,0,0]
 		self.VREFS=[0,0,0,0]  #0=Vdd,1=Internal reference
-		self.VRANGES=[[ -3.3,0],[0.,3.3],[-3.3,3.3],[-5.,5.]]
-		self.VtoCode=[np.poly1d(4095./(a[1]-a[0]),4095./(1) ) for a in self.VRANGES]
+		self.VRANGES=[[ -3.3e-3,0],[0.,3.3],[-3.3,3.3],[-5.,5.]]
+		self.VtoCode=[]
+		for a in self.VRANGES:
+			slope = (a[1]-a[0])
+			intercept = a[0]
+			self.VtoCode.append(np.poly1d([4095./slope,-4095.*intercept/slope ]))
+		print self.VtoCode
 
 	def setVoltage(self,chan,v):
+		chanMaps={'PCS':0,'PVS3':0,'PVS2':2,'PVS1':3}
+		dacChan = chanMaps[chan]
+		chan = ['PCS','PVS3','PVS2','PVS1'].index(chan)
 		R=self.VtoCode[chan]
 		v = int(R(v))
-		return self.__setRawVoltage__(chan,v)
+		self.__setRawVoltage__(dacChan,v)
+		R=self.VRANGES[chan]
+		return (R[1]-R[0])*v/4095.+R[0]
 
 	def __setRawVoltage__(self,chan,v,ADD_CALIBRATION=False):
-		'''
-		self.I2C.start(self.addr,0)
-		self.I2C.send(self.WRITEONE | (chan << 1))
-		self.I2C.send(self.VREFS[chan] << 7 | self.SWITCHEDOFF[chan] << 5 | 1 << 4 | (v>>8)&0xF )
-		self.I2C.send(v&0xFF)
-		self.I2C.stop()
-		'''
 		self.H.__sendByte__(DAC) #DAC write coming through.(MCP4922)
 		if(ADD_CALIBRATION):self.H.__sendByte__(SET_CALIBRATED_DAC)
 		else:self.H.__sendByte__(SET_DAC)

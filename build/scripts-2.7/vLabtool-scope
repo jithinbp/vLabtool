@@ -1,5 +1,4 @@
 #!/usr/bin/python
-#from PySide import QtCore, QtGui
 
 from argparse import ArgumentParser
 
@@ -141,7 +140,6 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 		self.scope_type=0
 		self.plot_area.addWidget(self.plot)
 		self.CH1_REMAPS.addItems(self.I.allAnalogChannels)
-		self.I.set_pvs3(1.650)
 		self.showgrid()
 		self.trigtext.setParentItem(self.arrow)
 		self.I.configure_trigger(self.trigger_channel,self.triggerChannelName,0)
@@ -180,7 +178,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 		self.PVS2_LABEL.setText('%.3f V'%(val))
 
 	def setPVS3(self,val):
-		val=self.I.DAC.__setRawVoltage__(1,val)
+		val=self.I.DAC.__setRawVoltage__(0,val)
 		self.PVS3_LABEL.setText('%.3f V'%(val))
 
 	def setPCS(self,val):

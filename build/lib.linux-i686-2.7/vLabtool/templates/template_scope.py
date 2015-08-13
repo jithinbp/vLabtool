@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'SLabtools/templates/scope.ui'
+# Form implementation generated from reading ui file 'vLabtool/templates/scope.ui'
 #
-# Created: Sat Aug  1 19:07:20 2015
+# Created: Tue Aug 11 23:39:51 2015
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -955,12 +955,12 @@ class Ui_MainWindow(object):
         self.label_7.setText(QtGui.QApplication.translate("MainWindow", "PVS2 ", None, QtGui.QApplication.UnicodeUTF8))
         self.PVS2_LABEL.setText(QtGui.QApplication.translate("MainWindow", "-3.3 to 3.3V", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("MainWindow", "PVS3", None, QtGui.QApplication.UnicodeUTF8))
-        self.PVS3_LABEL.setText(QtGui.QApplication.translate("MainWindow", "-5 to 5V", None, QtGui.QApplication.UnicodeUTF8))
+        self.PVS3_LABEL.setText(QtGui.QApplication.translate("MainWindow", "0 - 3.3V", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("MainWindow", "PCS", None, QtGui.QApplication.UnicodeUTF8))
         self.PCS_LABEL.setText(QtGui.QApplication.translate("MainWindow", "0-3.3mA", None, QtGui.QApplication.UnicodeUTF8))
         self.label_15.setText(QtGui.QApplication.translate("MainWindow", "Wavegen", None, QtGui.QApplication.UnicodeUTF8))
         self.label_19.setText(QtGui.QApplication.translate("MainWindow", "10Hz to 1MHz", None, QtGui.QApplication.UnicodeUTF8))
-        self.PVS1_LABEL.setText(QtGui.QApplication.translate("MainWindow", "0-3.3V", None, QtGui.QApplication.UnicodeUTF8))
+        self.PVS1_LABEL.setText(QtGui.QApplication.translate("MainWindow", "-5 to 5V", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("MainWindow", "Frequency", None, QtGui.QApplication.UnicodeUTF8))
         self.SQR_NM.setItemText(0, QtGui.QApplication.translate("MainWindow", "SQ1", None, QtGui.QApplication.UnicodeUTF8))
         self.SQR_NM.setItemText(1, QtGui.QApplication.translate("MainWindow", "SQ2", None, QtGui.QApplication.UnicodeUTF8))

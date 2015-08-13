@@ -42,7 +42,7 @@ class Interface(object):
 	|timeout   | serial port read timeout. default = 1s                          |
 	+----------+-----------------------------------------------------------------+
 
-	>>> from Labtools import interface
+	>>> from vLabtool import interface
 	>>> I = interface.Interface(2.0)
 	>>> print I
 	<interface.Interface instance at 0xb6c0cac>
@@ -172,8 +172,10 @@ class Interface(object):
 		Sub-Instance NRF of the Interface library contains methods to access wireless sensor nodes
 		via an NRF24L01+ module connnected to the SPI port
 		
+		try out the wireless modules app by running *vLabtool-experiments* from the command line.
+		
 		example::
-			>>> I=Interface()
+			>>> I=interface.Interface()
 			>>> I.NRF.init_shockburst_transmitter(myaddr=0xA623B1,sendaddr=0xA623B1) 
 			>>> I.NRF.write_payload([100,10,232,10,20,30]) 	#Send a bunch of data to a sensor node with a three byte address
 			>>> while not I.NRF.get_status()&0x20:   #Wait for data to be sent, and acknowledge received from sensor node
@@ -610,13 +612,13 @@ class Interface(object):
 		
 		These settings will not be used if the trigger option in the capture routines are set to False
 		
-		==============	============================================================================================
+		==============	=====================================================================================================================
 		**Arguments** 
-		==============	============================================================================================
-		chan			channel . 0,1 corresponding to the channels being recorded by the capture routine
+		==============	=====================================================================================================================
+		chan			channel . 0 or 1. corresponding to the channels being recorded by the capture routine(not the analog inputs)
 		name			the name of the channel. 'CH1'... 'V+'
 		voltage			The voltage level that should trigger the capture sequence(in Volts)
-		==============	============================================================================================
+		==============	=====================================================================================================================
 
 		**Example**
 		
@@ -2086,12 +2088,12 @@ class Interface(object):
 		==============	============================================================================================
 
 		"""
-		return self.DAC.setVoltage(3,val)
+		return self.DAC.setVoltage('PVS1',val)
 
 	def set_pvs2(self,val):
 		"""
 		Set the voltage on PVS2.
-		12-bit DAC...  -0 - 3.3V                                                                                                                
+		12-bit DAC...  0 - 3.3V                                                                                                                
 
 		==============	============================================================================================
 		**Arguments** 
@@ -2099,7 +2101,7 @@ class Interface(object):
 		val				Output voltage on PVS2. 0-3.3V
 		==============	============================================================================================
 		"""
-		return self.DAC.setVoltage(2,val)
+		return self.DAC.setVoltage('PVS2',val)
 
 	def set_pvs3(self,val):
 		"""
@@ -2113,12 +2115,11 @@ class Interface(object):
 
 		:return: Actual value set on pvs3
 		"""
-		return self.DAC.setVoltage(0,val)
+		return self.DAC.setVoltage('PVS3',val)
 		
 	def set_pcs(self,val):
 		"""
 		Set programmable current source
-		5-bit DAC...  0-3.3mA
 
 		==============	============================================================================================
 		**Arguments** 
@@ -2128,7 +2129,7 @@ class Interface(object):
 
 		:return: value attempted to set on pcs
 		"""
-		return self.DAC.setVoltage(0,val)
+		return self.DAC.setVoltage('PCS',val)
 		
 	def setOnboardLED(self,R,G,B):
 		"""

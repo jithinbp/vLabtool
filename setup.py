@@ -38,14 +38,14 @@ class CustomInstall(install):
 
 
 setup(name='vLabtool',
-	version='0.0.1',
+	version='0.0.2',
 	description='Package to deal with vLabtool',
 	author='Jithin B.P.',
 	author_email='jithinbp@gmail.com',
 	url='https://www.jithinbp.in/',
 	install_requires = ['numpy>=1.8.1','pyqtgraph>=0.9.10'],
 	packages=find_packages(),#['Labtools', 'Labtools.widgets'],
-	scripts=["vLabtool/bin/vLabtool-scope","vLabtool/bin/vLabtool-stream","vLabtool/bin/vLabtool-experiments"],
+	scripts=["vLabtool/bin/"+a for a in os.listdir("vLabtool/bin/")],
 	package_data={'': ['*.css','*.png']},
 	cmdclass={'install': CustomInstall},
 	)
