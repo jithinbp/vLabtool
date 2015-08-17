@@ -48,7 +48,7 @@ class I2C():
 		self.H.__get_ack__()
 		
 		 
-	def config(self,freq):
+	def config(self,freq,verbose=True):
 		"""
 		Sets frequency for I2C transactions
 		
@@ -64,7 +64,7 @@ class I2C():
 		BRGVAL=int( (1./freq-1./1e7)*64e6-1 )
 		if BRGVAL>511:
 			BRGVAL=511
-			print 'Frequency too low. Setting to :',1/((BRGVAL+1.0)/64e6+1.0/1e7)
+			if verbose:print 'Frequency too low. Setting to :',1/((BRGVAL+1.0)/64e6+1.0/1e7)
 		self.H.__sendInt__(BRGVAL) 
 		self.H.__get_ack__()
 
@@ -238,17 +238,18 @@ class I2C():
 			self.H.__sendByte__(a)
 		self.H.__get_ack__()
 
-	def scan(self,frequency = 100000):
-		self.config(frequency)
+	def scan(self,frequency = 100000,verbose=False):
+		self.config(frequency,verbose)
 		addrs=[]
 		n=0
-		print 'Scanning addresses 0-127...'
-		print 'Address','\t','Possible Devices'
+		if verbose:
+			print 'Scanning addresses 0-127...'
+			print 'Address','\t','Possible Devices'
 		for a in range(0,128):
 			x = self.start(a,0)
 			if x&1 == 0:	#ACK received
 				addrs.append(a)
-				print hex(a),'\t\t',self.SENSORS.get(a,'None')
+				if verbose: print hex(a),'\t\t',self.SENSORS.get(a,'None')
 				n+=1
 			self.stop()
 		return addrs
