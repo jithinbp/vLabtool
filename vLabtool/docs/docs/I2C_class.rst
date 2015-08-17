@@ -1,4 +1,4 @@
-I2C_class module
+I2C_class Module
 ================
 
 .. automodule:: I2C_class

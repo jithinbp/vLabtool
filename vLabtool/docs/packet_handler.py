@@ -1,5 +1,5 @@
 from commands_proto import *
-import serial,fcntl
+import serial
 
 class Singleton(type):
     _instances = {}
@@ -17,46 +17,52 @@ class Handler(object):
 		self.inputQueueSize=0
 		self.BASE_PORT_NAME = "/dev/ttyACM"
 		self.timeout=timeout
+		self.version_string=''
+		self.connected=False
 		if kwargs.has_key('port'):
 				self.portname=kwargs.get('port',None)
 				if not self.portname:
-					print 'device not found'
+					print 'device not found',self.portname
 					sys.exit(1)
 				self.fd = serial.Serial(self.portname, 9600, stopbits=1, timeout = 0.02)
 				self.fd.read(100)
 				self.fd = serial.Serial(self.portname, 1000000, stopbits=1, timeout = 1.0)
-				#fcntl.flock(self.fd.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
 				if(self.fd.inWaiting()):
 					self.fd.read(1000)
 					self.fd.flush()
 				version = self.get_version(self.fd)
 				print 'Connected to device at ',self.portname,' ,Version:',version
+				self.connected=True
 				self.version_string=version
+				return
 		else:	#Scan and pick a port	
 			for a in range(10):
 				try:
-					self.fd = serial.Serial(self.BASE_PORT_NAME+str(a), 9600, stopbits=1, timeout = 0.02)
-					self.fd.read(100)
-					self.fd = serial.Serial(self.BASE_PORT_NAME+str(a), 1000000, stopbits=1, timeout = 1)
-					fcntl.flock(self.fd.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+					self.fd = serial.Serial(self.BASE_PORT_NAME+str(a), 9600, stopbits=1, timeout = 0.01)
+					#self.fd.read(100)
+					self.fd.close()
+					self.fd = serial.Serial(self.BASE_PORT_NAME+str(a), 1000000, stopbits=1, timeout = 0.2)
 					self.portname=self.BASE_PORT_NAME+str(a)
-					if(self.fd.inWaiting()):
-						self.fd.read(1000)
-						self.fd.flush()
+					self.fd.read(1000)
+					self.fd.flush()
 					version = self.get_version(self.fd)
 					self.version_string=version
 					if(version[:3]=='LTS'):
 						print 'Connected to device at ',self.portname,' ,Version:',version
-						return
+						self.fd.setTimeout(1.)
+						self.connected=True
+						break
+					print self.BASE_PORT_NAME+str(a)+' .yes.',version
 				except IOError:
-					print self.BASE_PORT_NAME+str(a)+' is taken '
+					print self.BASE_PORT_NAME+str(a)+' .no.'
 					pass
-			
+		if not self.connected:
+			print 'Device not found'
 		
 	def get_version(self,fd):
 		fd.write(chr(COMMON))
 		fd.write(chr(GET_VERSION))
-		x=fd.readline()
+		x=fd.read(100)
 		return x
 
 	def reconnect(self):
@@ -90,8 +96,7 @@ class Handler(object):
 		if not self.loadBurst:x=self.fd.read(1)
 		else:
 			self.inputQueueSize+=1
-			x=1
-		#print x
+			return 1
 		return ord(x)
 
 	def __sendInt__(self,val):
@@ -121,7 +126,8 @@ class Handler(object):
 		ss=self.fd.read(1)
 		if len(ss): return ord(ss)
 		else:
-			print 'communication error.'
+			print 'byte communication error.',time.ctime()
+			#return False
 			sys.exit(1)
 	
 	def __getInt__(self):
@@ -132,7 +138,8 @@ class Handler(object):
 		ss = self.fd.read(2)
 		if len(ss)==2: return ord(ss[0])|(ord(ss[1])<<8)
 		else:
-			print 'communication error.'
+			print 'int communication error.',time.ctime()
+			#return False
 			sys.exit(1)
 
 	def __getLong__(self):
@@ -165,6 +172,7 @@ class Handler(object):
 		
 
 		"""
+		print [ord(a) for a in self.burstBuffer],self.inputQueueSize
 		self.fd.write(self.burstBuffer)
 		self.burstBuffer=''
 		self.loadBurst=False

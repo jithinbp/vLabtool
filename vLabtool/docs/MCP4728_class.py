@@ -1,5 +1,6 @@
 from commands_proto import *
 import I2C_class
+import numpy as np
 
 class MCP4728:
 	defaultVDD =3300
@@ -21,30 +22,40 @@ class MCP4728:
 		self.I2C = I2C_class.I2C(self.H)
 		self.SWITCHEDOFF=[0,0,0,0]
 		self.VREFS=[0,0,0,0]  #0=Vdd,1=Internal reference
-		self.VRANGES=[[0,3.3],[0,3.3],[-3.3,3.3],[-5,5]]
+		self.VRANGES=[[ -3.3e-3,0],[0.,3.3],[-3.3,3.3],[-5.,5.]]
+		self.VtoCode=[]
+		for a in self.VRANGES:
+			slope = (a[1]-a[0])
+			intercept = a[0]
+			self.VtoCode.append(np.poly1d([4095./slope,-4095.*intercept/slope ]))
+		print self.VtoCode
 
 	def setVoltage(self,chan,v):
+		chanMaps={'PCS':0,'PVS3':0,'PVS2':2,'PVS1':3}
+		dacChan = chanMaps[chan]
+		chan = ['PCS','PVS3','PVS2','PVS1'].index(chan)
+		R=self.VtoCode[chan]
+		v = int(R(v))
+		self.__setRawVoltage__(dacChan,v)
 		R=self.VRANGES[chan]
-		v = int(4095*(v-R[0])/(R[1]-R[0]))
-		self.__setRawVoltage__(chan,v)
-		return (R[1]-R[0])*v/4095+R[0]
+		return (R[1]-R[0])*v/4095.+R[0]
 
-	def __setRawVoltage__(self,chan,v):
-		'''
-		self.I2C.start(self.addr,0)
-		self.I2C.send(self.WRITEONE | (chan << 1))
-		self.I2C.send(self.VREFS[chan] << 7 | self.SWITCHEDOFF[chan] << 5 | 1 << 4 | (v>>8)&0xF )
-		self.I2C.send(v&0xFF)
-		self.I2C.stop()
-		'''
+	def __setRawVoltage__(self,chan,v,ADD_CALIBRATION=False):
 		self.H.__sendByte__(DAC) #DAC write coming through.(MCP4922)
-		self.H.__sendByte__(SET_DAC)
+		if(ADD_CALIBRATION):self.H.__sendByte__(SET_CALIBRATED_DAC)
+		else:self.H.__sendByte__(SET_DAC)
 		self.H.__sendByte__(self.addr<<1)	#I2C address
 		self.H.__sendByte__(chan)		#DAC channel
 		self.H.__sendInt__((self.VREFS[chan] << 15) | (self.SWITCHEDOFF[chan] << 13) | (1 << 12) | v )
 		#print chan,hex((self.VREFS[chan] << 15) | (self.SWITCHEDOFF[chan] << 13) | (1 << 12) | v )
+		if(ADD_CALIBRATION):
+			val = self.H.__getInt__()
+			#print 'val, correction: ',v,val-v
+		else: pass#print v
 		self.H.__get_ack__()
+		if chan==0:chan=1   #pvs3=pcs=DAC channel 1
 		R=self.VRANGES[chan]
+		#print 'code',self.VtoCode[chan]((R[1]-R[0])*v/4095.+R[0])
 		return (R[1]-R[0])*v/4095.+R[0]
 
 	def __writeall__(self,v1,v2,v3,v4):

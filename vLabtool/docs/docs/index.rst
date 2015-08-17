@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Lab ToolSuite's documentation!
+Welcome to vLabtool's documentation!
 =========================================
 
 Contents:
@@ -15,6 +15,7 @@ Contents:
    SPI_class
    I2C_class
    NRF24L01_class
+   experiment
    Apps
 
 Indices and tables

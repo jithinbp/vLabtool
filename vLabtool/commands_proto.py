@@ -212,6 +212,13 @@ CS2		=7
 TEN_BIT=10
 TWELVE_BIT=12
 
+class Singleton(type):
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
 def InttoString(val):
 	return	chr(val&0xff) +  chr((val>>8)&0xff)
 

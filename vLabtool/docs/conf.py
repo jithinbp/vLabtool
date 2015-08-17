@@ -45,7 +45,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'LabToolSuite'
+project = u'vLabtool'
 copyright = u'2015, Jithin B.'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -108,10 +108,10 @@ html_theme = 'default'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = "Lab ToolSuite Documentation"
+html_title = "vLabtool Programer's Manual"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-html_short_title = "Lab ToolSuite Quick ref"
+html_short_title = "vLabtool Quick ref"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
@@ -232,8 +232,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'Lab ToolSuite', u'. Documentation',
-   u'Jithin B.', '', 'One line description of project.',
+  ('index', 'vLabtool', u'. Documentation',
+   u'Jithin B.', '', 'Programmer"s manual for the vLabtool.',
    'Miscellaneous'),
 ]
 

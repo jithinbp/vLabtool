@@ -18,18 +18,12 @@ import sys
 import numpy as np
 import math
 
-class Singleton(type):
-    _instances = {}
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
 
 class Interface(object):
 	"""
 	**Communications library.**
 
-	This class contains methods that can be used to interact with the pilabtool
+	This class contains methods that can be used to interact with the vLabtool
 
 	Initialization does the following
 	
@@ -54,11 +48,21 @@ class Interface(object):
 	"""
 	__metaclass__ = Singleton
 
-	ADC_SHIFTS_LOCATION1=11
-	ADC_SHIFTS_LOCATION2=12
-	ADC_POLYNOMIALS_LOCATION=13
 	
 	def __init__(self,timeout=1.0,**kwargs):
+		self.ADC_SHIFTS_LOCATION1=11
+		self.ADC_SHIFTS_LOCATION2=12
+		self.ADC_POLYNOMIALS_LOCATION=13
+
+		self.DAC_POLYNOMIALS_LOCATION=1
+		self.DAC_SHIFTS_PVS1A=14
+		self.DAC_SHIFTS_PVS1B=15
+		self.DAC_SHIFTS_PVS2A=16
+		self.DAC_SHIFTS_PVS2B=17
+		self.DAC_SHIFTS_PVS3A=18
+		self.DAC_SHIFTS_PVS3B=19
+
+
 		self.BAUD = 1000000
 		self.timebase = 40
 		self.MAX_SAMPLES = 10000
@@ -174,17 +178,23 @@ class Interface(object):
 		
 		try out the wireless modules app by running *vLabtool-experiments* from the command line.
 		
-		example::
-			>>> I=interface.Interface()
-			>>> I.NRF.init_shockburst_transmitter(myaddr=0xA623B1,sendaddr=0xA623B1) 
-			>>> I.NRF.write_payload([100,10,232,10,20,30]) 	#Send a bunch of data to a sensor node with a three byte address
-			>>> while not I.NRF.get_status()&0x20:   #Wait for data to be sent, and acknowledge received from sensor node
-			>>> 	print I.NRF.get_status(), hex(I.NRF.read_register(I.NRF.OBSERVE_TX)),I.NRF.read_register(I.NRF.SETUP_RETR)
-			>>> 	time.sleep(0.1)
-			>>> l = I.NRF.read_register(I.NRF.R_RX_PL_WID)   #Sensor node may acknowledge with some additional data
-			>>> if l:					 #Read the reply if any
-			>>> 	x = I.NRF.read_payload(l)
-			>>> 	print a,l,[chr(m) for m in x],
+		.. _nrf_example:
+
+			example::
+				>>> I=interface.Interface()
+				>>> I.NRF.start_token_manager()  #Start listening to any nodes that may turn on 
+				>>> while 1:   #Wait for at least one node to register itself
+				>>> 	lst = I.NRF.get_nodelist()
+				>>> 	print lst
+				>>> 	time.sleep(0.5)
+				>>> 	if(len(lst)>0):break
+				>>> I.NRF.stop_token_manager()	# Registrations closed!
+				>>> LINK = I.newRadioLink(address=lst.keys()[0])  #lst = dictionary with node addresses as keys, and I2C sensors as values
+				>>> print LINK.I2C_scan()						  #vLabtool automatically transmits stuff to LINK's address, and retrieves sensor info.
+		
+			.. raw:: html
+		
+				<iframe width="560" height="315" src="https://www.youtube.com/embed/7VAGckFzVlc" frameborder="0" allowfullscreen></iframe>
 		
 		.. seealso:: :py:meth:`~NRF24L01_class.NRF24L01` for complete documentation
 		"""
@@ -202,8 +212,10 @@ class Interface(object):
 	
 	def __del__(self):
 		print 'closing port'
-		#try:self.fd.close()
-		#except: pass
+		try:
+			self.fd.close()
+		except:
+			pass
 
 	def get_version(self):
 		"""
@@ -213,6 +225,19 @@ class Interface(object):
 		return self.H.get_version(self.H.fd)
 	
 	def newRadioLink(self,**args):
+		'''
+		==============	============================================================================================
+		**Arguments** 
+		==============	============================================================================================
+		\*\*Kwargs
+		address			address of the node. a 24 bit number. Printed on the nodes. Can also be retrieved using
+						:py:meth:`~NRF24L01_class.NRF24L01.get_nodelist`
+		==============	============================================================================================
+		:return: :py:meth:`~NRF_NODE.RadioLink`
+
+		.. seealso:: nrf_example_ 
+		
+		'''
 		return NRF_NODE.RadioLink(self.NRF,**args)
 	#-------------------------------------------------------------------------------------------------------------------#
 
@@ -366,15 +391,23 @@ class Interface(object):
 		* trigger	   	Whether or not to trigger the oscilloscope based on the voltage level set by :func:`configure_trigger`
 		===================	============================================================================================
 
-		.. figure:: ../images/transient.png
-			:width: 600px
-			:align: center
-			:alt: alternate text
-			:figclass: align-center
-			
-			Transient response of an Inductor and Capacitor in series
+		.. raw:: html
+		
+			<div align="center">
+			<iframe width="560" height="315" src="https://www.youtube.com/embed/M40dCvR1v7Y" frameborder="0" allowfullscreen></iframe>
+			</div>
+
 	
 		.. _adc_example:
+
+
+			.. figure:: ../images/transient.png
+				:width: 600px
+				:align: center
+				:alt: alternate text
+				:figclass: align-center
+			
+				Transient response of an Inductor and Capacitor in series
 
 			The following example demonstrates how to use this function to record active events.
 
@@ -742,6 +775,10 @@ class Interface(object):
 		|sleep       | read voltage in CPU sleep mode. not particularly useful. Also, Buggy.                   |
 		+------------+-----------------------------------------------------------------------------------------+
 
+		.. raw:: html
+	
+			<iframe width="560" height="315" src="https://www.youtube.com/embed/oPVh_IaMU_g" frameborder="0" allowfullscreen></iframe>
+
 		Example:
 		
 		>>> print I.get_average_voltage('CH4')
@@ -814,6 +851,10 @@ class Interface(object):
 		The input frequency is fed to a 32 bit counter for a period of 100mS.
 		The value of the counter at the end of 100mS is used to calculate the frequency.
 		
+		.. raw:: html
+	
+			<iframe width="560" height="315" src="https://www.youtube.com/embed/9RLBPgxYGvM" frameborder="0" allowfullscreen></iframe>
+
 		.. seealso:: :func:`get_freq`
 		
 		==============	============================================================================================
@@ -1302,6 +1343,10 @@ class Interface(object):
 		
 		:return: Nothing
 
+		.. raw:: html
+	
+			<iframe width="560" height="315" src="https://www.youtube.com/embed/vzjDV18AmOo" frameborder="0" allowfullscreen></iframe>
+
 		"""
 		self.clear_buffer(0,self.MAX_SAMPLES/2);
 		self.H.__sendByte__(TIMING)
@@ -1662,6 +1707,7 @@ class Interface(object):
 		"""
 		
 		set the logic level on digital outputs OD1,OD2,SQR1,SQR2
+		For newer units, OD1,OD2 have been renamed to SQR3,SQR4. Both mnemonics will work.
 
 		==============	============================================================================================
 		**Arguments** 
@@ -1683,41 +1729,16 @@ class Interface(object):
 			data|= 0x10|(kwargs.get('SQR1'))
 		if kwargs.has_key('SQR2'):
 			data|= 0x20|(kwargs.get('SQR2')<<1)
+		if kwargs.has_key('SQR3'):
+			data|= 0x40|(kwargs.get('SQR3')<<2)
+		if kwargs.has_key('SQR4'):
+			data|= 0x80|(kwargs.get('SQR4')<<3)
 		self.H.__sendByte__(DOUT)
 		self.H.__sendByte__(SET_STATE)
 		self.H.__sendByte__(data)
 		self.H.__get_ack__()
 
 
-
-	'''
-
-
-	def sendBurst(self):
-		"""
-		Transmits the commands stored in the burstBuffer.
-		empties input buffer
-		empties the burstBuffer.
-		
-		The following example initiates the capture routine and sets OD1 HIGH immediately.
-		
-		It is used by the Transient response experiment where the input needs to be toggled soon
-		after the oscilloscope has been started.
-		
-		>>> I.loadBurst=True
-		>>> I.capture_traces(4,800,2)
-		>>> I.set_state(OD1=1)
-		>>> I.sendBurst()
-		
-
-		"""
-		self.fd.write(self.burstBuffer)
-		self.burstBuffer=''
-		self.loadBurst=False
-		acks=self.fd.read(self.inputQueueSize)
-		self.inputQueueSize=0
-		return [ord(a) for a in acks]
-	'''
 
 	def __get_capacitor_range__(self,ctime):
 		self.H.__sendByte__(COMMON)
@@ -1854,6 +1875,11 @@ class Interface(object):
 	def write_flash(self,page,location,string_to_write):
 		"""
 		write a 16 BYTE string to the selected location (0-63)
+
+		DO NOT USE THIS UNLESS YOU'RE ABSOLUTELY SURE KNOW THIS!
+		YOU MAY END UP OVERWRITING THE CALIBRATION DATA, AND WILL HAVE
+		TO GO THROUGH THE TROUBLE OF GETTING IT FROM THE MANUFACTURER AND
+		REFLASHING IT.
 		
 		================	============================================================================================
 		**Arguments** 
@@ -1876,6 +1902,11 @@ class Interface(object):
 	def write_bulk_flash(self,location,bytearray):
 		"""
 		write a byte array to the entire flash page. Erases any other data
+
+		DO NOT USE THIS UNLESS YOU'RE ABSOLUTELY SURE KNOW THIS!
+		YOU MAY END UP OVERWRITING THE CALIBRATION DATA, AND WILL HAVE
+		TO GO THROUGH THE TROUBLE OF GETTING IT FROM THE MANUFACTURER AND
+		REFLASHING IT.
 		
 		================	============================================================================================
 		**Arguments** 
@@ -1913,6 +1944,8 @@ class Interface(object):
 		
 		:return: Voltage
 		"""	
+		if channel=='CAP':channel=5
+		
 		self.H.__sendByte__(COMMON)
 		self.H.__sendByte__(GET_CTMU_VOLTAGE)
 		self.H.__sendByte__((channel)|(Crange<<5)|(tgen<<7))
@@ -1929,9 +1962,9 @@ class Interface(object):
 
 	def get_temperature(self):
 		"""
-		return the on-chip temperature
+		return the processor's temperature
 		
-		:return: Chip Temperature 
+		:return: Chip Temperature in degree Celcius
 		"""	
 		V=self.get_ctmu_voltage(0b11110,3,0)
 		return (783.24-V*1000)/1.87
@@ -1968,9 +2001,9 @@ class Interface(object):
 		**Arguments** 
 		==============	============================================================================================
 		frequency		Frequency to set on wave generator . 0MHz to 8MHz
-		register	Frequency register to update.  The wavegen has two different registers for storing the 
-				output frequency.  These are used to quickly switch between the two registers for applications
-				like frequency shift keying(FSK)
+		register		Frequency register to update.  The wavegen has two different registers for storing the 
+						output frequency.  These are used to quickly switch between the two registers for applications
+						like frequency shift keying(FSK)
 		==============	============================================================================================
 		
 		:return: frequency
@@ -1988,93 +2021,47 @@ class Interface(object):
 		return frequency
 
 
-	def set_waveform_type(self,channel,waveform='sine'):
+	def set_waveform_type(self,waveform='sine'):
 		"""
+		set the output type of the waveform generator
+
+		==============	============================================================================================
+		**Arguments** 
+		==============	============================================================================================
+		waveform		'sine', 'triangle', or 'square'
+		==============	============================================================================================
+
 		"""
 		self.SPI.set_parameters(1,7,1,1)
 		wave={'sine':0,'triangle':1,'square':2}
 		self.H.__sendByte__(WAVEGEN)
 		self.H.__sendByte__(SET_WAVEFORM_TYPE)
-		self.H.__sendByte__((1<<wave.get(waveform,0))|(0x10<<channel))		
+		self.H.__sendByte__((1<<wave.get(waveform,0)))		
 		self.H.__get_ack__()
 		self.SPI.set_parameters(1,7,1,0)
 
-	def select_freq(self,channel,register):
+	def select_freq(self,register):
 		"""
-		"""
-		self.SPI.set_parameters(1,7,1,1)
-		wave={'sine':0,'triangle':1,'square':2}
-		self.H.__sendByte__(WAVEGEN)
-		self.H.__sendByte__(SELECT_FREQ_REGISTER)
-		self.H.__sendByte__((1<<register)|(0x10<<channel))		
-		self.H.__get_ack__()
-		self.SPI.set_parameters(1,7,1,0)
-
-
-	def reload_waveform(self,channel=1,expr='sin(x)'):
-		"""
-		set shade of WS2182 LED on PIC1572 1 RA2
-		
-		.. Note:: This function normalizes and shifts the input table to the full voltage scale of the wavegen
+		The waveform generator has two frequency registers.  That is, you may store two different frequency
+		values with distinct waveform shapes, and quickly toggle between them using this command.
+		refer to :func:`set_sine`
 		
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		Channel			Channel number. 1/2 for Sine1 or Sine2
-		expr			A mathematical expression for the waveform. Supports sin,cos,tan,exp
+		register		0 or 1
 		==============	============================================================================================
 		"""
-		channel=1
-		x=np.linspace(0,2*np.pi,51)[:-1]
-		variables={'__builtins__':None,'sin':np.sin,'cos':np.cos,'exp':np.exp,'tan':np.tan,'x':x,'X':x}
-		table=eval(expr, variables)
-		table=np.array(table)
-		table-=min(table)	#move it into the positive domain
-		table/=max(table)   #normalize
-		table*=255
-		self.send_address(channel)
-		self.H.send_char('W')
-		self.H.send_char(len(table))
-		for a in table:self.H.send_char(int(round(a)))
-
-	def write_dac(self,channel,n):
-		"""
-		writes a value(12 bit) to the DAC.
-
-		+----------+-----------------------------------------------------------------+
-		|Arguments |Description                                                      |
-		+==========+=================================================================+
-		|channel   | channel number.                                                 |
-		+          +                                                                 +
-		|          | * 0 -> PVS1 (-5 to 5V)                                          |
-		+          +                                                                 +
-		|          | * 1 -> PVS2 (-5 to 5V)                                          |
-		+          +                                                                 +
-		|          | * 2 -> PVS3 (-5 to 5V)                                          |
-		+          +                                                                 +
-		|          | * 3 -> PCS (0-3mA)                                              |
-		+----------+-----------------------------------------------------------------+
-		|n         | value to set (0-4095)                                           |
-		+----------+-----------------------------------------------------------------+
-		
-		:return: nothing
-
-		.. warning:: n should be between 0 and 4095 for both channels. The output voltage will be scaled accordingly.
-
-		>>> I.write_dac(0,4095) # pvs1 set to 5Volts
-		>>> I.write_dac(0,0) # pvs1 set to -5Volts
-		
-		.. seealso::
-			
-			:func:`set_pvs1` and :func:`set_pvs2`
-
-				
-		"""		
-		self.H.__sendByte__(DAC) #DAC write coming through.(MCP4922)
-		self.H.__sendByte__(SET_DAC)
-		val=(channel<<15)|(1<<14)|(1<<13)|(1<<12)|n #channel-15,buf-14,g-13,on/off-12,value 0-11
-		self.H.__sendInt__(val)
+		self.SPI.set_parameters(1,7,1,1)
+		self.H.__sendByte__(WAVEGEN)
+		self.H.__sendByte__(SELECT_FREQ_REGISTER)
+		self.H.__sendByte__((1<<register))		
 		self.H.__get_ack__()
+		self.SPI.set_parameters(1,7,1,0)
+
+
+
+
 
 	def set_pvs1(self,val):
 		"""
@@ -2161,11 +2148,15 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		col		array [R,G,B]
-		R				brightness of red colour 0-255
-		G				brightness of green colour 0-255
-		B				brightness of blue colour 0-255
+		cols				2Darray [[R,G,B],[R2,G2,B2],[R3,G3,B3]...]
+							brightness of R,G,B ( 0-255  )
 		==============	============================================================================================
+
+		.. raw:: html
+	
+			<iframe width="560" height="315" src="https://www.youtube.com/embed/E7Q4B1jeKH0" frameborder="0" allowfullscreen></iframe>
+
+
 		"""
 		self.H.__sendByte__(COMMON)
 		self.H.__sendByte__(SET_RGB)
@@ -2175,24 +2166,6 @@ class Interface(object):
 			self.H.__sendByte__(G);	self.H.__sendByte__(R);self.H.__sendByte__(B)
 		self.H.__get_ack__()
 
-	def tune_wavegen(self,tune):
-		"""
-		Tune the oscillator frequency of PIC1572 (1).
-		100000->111111 : no change to minimum
-		000001->011111 : - to maximum
-		
-		==============	============================================================================================
-		**Arguments** 
-		==============	============================================================================================
-		tune			change in clock frequency. -32 to 31
-		==============	============================================================================================
-
-		"""
-		self.send_address(1)
-		self.H.send_char('O')
-		self.H.send_char(tune&0x3F)
-		print bin(tune&0x3F)
-		time.sleep(0.001)	
 
 
 	def fetch_buffer(self,starting_position=0,total_points=100):
@@ -2222,8 +2195,8 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		tg		timegap. 250KHz clock
-		channel		channel 'CH1'... 'CH9','IN1','SEN'
+		tg				timegap. 250KHz clock
+		channel			channel 'CH1'... 'CH9','IN1','SEN'
 		==============	============================================================================================
 
 		"""
@@ -2254,8 +2227,8 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		frequency	Frequency
-		duty_cycle	Percentage of high time
+		frequency		Frequency
+		duty_cycle		Percentage of high time
 		==============	============================================================================================
 		"""
 		p=[1,8,64,256]
@@ -2286,8 +2259,8 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		frequency	Frequency
-		duty_cycle	Percentage of high time
+		frequency		Frequency
+		duty_cycle		Percentage of high time
 		==============	============================================================================================
 		"""
 		p=[1,8,64,256]
@@ -2316,11 +2289,11 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		wavelength	Number of 64Mhz/prescaler clock cycles per wave
-		phase		Clock cycles between rising edges of SQR1 and SQR2
-		high time1	Clock cycles for which SQR1 must be HIGH
-		high time2	Clock cycles for which SQR2 must be HIGH
-		prescaler	0,1,2. Divides the 64Mhz clock by 8,64, or 256
+		wavelength		Number of 64Mhz/prescaler clock cycles per wave
+		phase			Clock cycles between rising edges of SQR1 and SQR2
+		high time1		Clock cycles for which SQR1 must be HIGH
+		high time2		Clock cycles for which SQR2 must be HIGH
+		prescaler		0,1,2. Divides the 64Mhz clock by 8,64, or 256
 		==============	============================================================================================
 		
 		"""
@@ -2340,14 +2313,14 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		freq		Frequency in Hertz
-		h0		Duty Cycle for SQR1 (0-1)
-		p1		Phase shift for SQR2 (0-1)
-		h1		Duty Cycle for SQR2 (0-1)
-		p2		Phase shift for OD1  (0-1)
-		h2		Duty Cycle for OD1  (0-1)
-		p3		Phase shift for OD2  (0-1)
-		h3		Duty Cycle for OD2  (0-1)
+		freq			Frequency in Hertz
+		h0				Duty Cycle for SQR1 (0-1)
+		p1				Phase shift for SQR2 (0-1)
+		h1				Duty Cycle for SQR2 (0-1)
+		p2				Phase shift for OD1  (0-1)
+		h2				Duty Cycle for OD1  (0-1)
+		p3				Phase shift for OD2  (0-1)
+		h3				Duty Cycle for OD2  (0-1)
 		==============	============================================================================================
 		
 		"""
@@ -2402,14 +2375,14 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		freq		Frequency in Hertz
-		h0		Duty Cycle for SQR1 (0-1)
-		p1		Phase shift for SQR2 (0-1)
-		h1		Duty Cycle for SQR2 (0-1)
-		p2		Phase shift for OD1  (0-1)
-		h2		Duty Cycle for OD1  (0-1)
-		p3		Phase shift for OD2  (0-1)
-		h3		Duty Cycle for OD2  (0-1)
+		freq			Frequency in Hertz
+		h0				Duty Cycle for SQR1 (0-1)
+		p1				Phase shift for SQR2 (0-1)
+		h1				Duty Cycle for SQR2 (0-1)
+		p2				Phase shift for OD1  (0-1)
+		h2				Duty Cycle for OD1  (0-1)
+		p3				Phase shift for OD2  (0-1)
+		h3				Duty Cycle for OD2  (0-1)
 		==============	============================================================================================
 		
 		"""
@@ -2453,19 +2426,20 @@ class Interface(object):
 
 	def delay_generator(self,**args):
 		"""
+		UNSUPPORTED IN FIRMWARE. DO NOT USE
 		Use Comparator on CH4 to triggger output pulses after precise intervals.
 		
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
 		\*\*kwargs
-		h0		High time for SQR1 (0-0xFFFF uS)
-		p1		Phase shift for SQR2 (0-0xFFFF uS)
-		h1		High time for SQR2 (0-0xFFFF uS)
-		p2		Phase shift for OD1  (0-0xFFFF uS)
-		h2		High time for OD1  (0-0xFFFF uS)
-		p3		Phase shift for OD2  (0-0xFFFF uS)
-		h3		High time for OD2  (0-0xFFFF uS)
+		h0				High time for SQR1 (0-0xFFFF uS)
+		p1				Phase shift for SQR2 (0-0xFFFF uS)
+		h1				High time for SQR2 (0-0xFFFF uS)
+		p2				Phase shift for OD1  (0-0xFFFF uS)
+		h2				High time for OD1  (0-0xFFFF uS)
+		p3				Phase shift for OD2  (0-0xFFFF uS)
+		h3				High time for OD2  (0-0xFFFF uS)
 		==============	============================================================================================
 		NOTE: hx+px must be less than 0xFFFF
 		"""
@@ -2517,6 +2491,11 @@ class Interface(object):
 		
 		outputs 32 MHz on sqr1, sqr2 pins
 		
+		.. note::
+			if you change the reference clock for 'wavegen' , the waveform generator resolution and range will also change.
+			default frequency for 'wavegen' is 16MHz. Setting to 1MHz will give you 16 times better resolution, but a usable range of
+			0Hz to about 100KHz instead of the original 2MHz.
+		
 		"""
 		self.H.__sendByte__(WAVEGEN)
 		self.H.__sendByte__(MAP_REFERENCE)
@@ -2557,8 +2536,8 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		address		Address to write to. Refer to PIC24EP64GP204 programming manual
-				Do Not Screw around with this. It won't work anyway.            
+		address			Address to write to. Refer to PIC24EP64GP204 programming manual
+						Do Not Screw around with this. It won't work anyway.            
 		==============	============================================================================================
 		"""
 		self.H.__sendByte__(COMMON)
@@ -2575,7 +2554,7 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		address		Address to read from.  Refer to PIC24EP64GP204 programming manual|
+		address			Address to read from.  Refer to PIC24EP64GP204 programming manual|
 		==============	============================================================================================
 		"""
 		self.H.__sendByte__(COMMON)
@@ -2592,7 +2571,7 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		address		Address to write to.  Refer to PIC24EP64GP204 programming manual|
+		address			Address to write to.  Refer to PIC24EP64GP204 programming manual|
 		==============	============================================================================================
 		"""
 		self.H.__sendByte__(COMMON)
@@ -2627,16 +2606,16 @@ class Interface(object):
 
 	def servo4(self,a1,a2,a3,a4):
 		"""
-		Operate Four servo motors independently using SQR1, SQR2, OD1, OD2.
+		Operate Four servo motors independently using SQR1, SQR2, SQR3, SQR4.
 		tested with SG-90 9G servos.
 		
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		a1			Angle to set on Servo which uses SQR1 as PWM input. [0-180]
-		a2			Angle to set on Servo which uses SQR2 as PWM input. [0-180]
-		a3			Angle to set on Servo which uses OD1 as PWM input. [0-180]
-		a4			Angle to set on Servo which uses OD2 as PWM input. [0-180]
+		a1				Angle to set on Servo which uses SQR1 as PWM input. [0-180]
+		a2				Angle to set on Servo which uses SQR2 as PWM input. [0-180]
+		a3				Angle to set on Servo which uses SQR3 as PWM input. [0-180]
+		a4				Angle to set on Servo which uses SQR4 as PWM input. [0-180]
 		==============	============================================================================================
 		
 		"""
@@ -2685,8 +2664,9 @@ class Interface(object):
 
 	def estimateDistance(self):
 		'''
+		
 		Read data from ultrasonic distance sensor HC-SR04/HC-SR05.  Sensors must have separate trigger and output pins.
-		First a 10uS pulse is output on OD1.  OD1 must be connected to the TRIG pin on the sensor prior to use.
+		First a 10uS pulse is output on SQR3.  SQR3 must be connected to the TRIG pin on the sensor prior to use.
 
 		Upon receiving this pulse, the sensor emits a sequence of sound pulses, and the logic level of its output
 		pin(which we will monitor via ID1) is also set high.  The logic level goes LOW when the sound packet
@@ -2717,7 +2697,8 @@ class Interface(object):
 
 	def TemperatureAndHumidity(self):
 		'''
-		read from AM2302
+		init  AM2302.  
+		This effort was a waste.  There are better humidity and temperature sensors available which use well documented I2C
 		'''
 		self.H.__sendByte__(NONSTANDARD_IO)
 		self.H.__sendByte__(AM2302_HEADER)
@@ -2728,6 +2709,9 @@ class Interface(object):
 	def opticalArray(self,tg,delay,tp):
 		'''
 		read from AM2302
+		.. raw:: html
+	
+			<iframe width="560" height="315" src="https://www.youtube.com/embed/PIIuwt4ZOh8" frameborder="0" allowfullscreen></iframe>
 		'''
 		samples=3694
 		self.H.__sendByte__(NONSTANDARD_IO)
@@ -2745,7 +2729,8 @@ class Interface(object):
 
 	def readLog(self):
 		'''
-		read hardware log
+		read hardware log.
+		
 		'''
 		self.H.__sendByte__(COMMON)
 		self.H.__sendByte__(READ_LOG)

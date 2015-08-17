@@ -1,5 +1,7 @@
 cp ../experiment.py .
 cp -R ../widgets .
+cp -R ../templates .
+
 cp ../custom_widgets.py .
 cp ../achan.py .
 cp ../digital_channel.py .
@@ -9,11 +11,18 @@ cp ../SPI_class.py .
 cp ../I2C_class.py .
 cp ../NRF24L01_class.py .
 cp ../MCP4728_class.py .
-
-cp -R ../Apps/*.py Apps/
+cp ../NRF_NODE.py .
+cp ../commands_proto.py .
+cp ../customui_rc.py .
+cd Apps
+rm -r *
+cp -R ../../bin/* .
+touch __init__
+for file in * ; do mv "$file" "${file}.py" ; done
+cd ..
 
 rm -rf docs
-sphinx-apidoc -H "Lab ToolSuite" -A "Jithin B."  -F -e -o docs .
+sphinx-apidoc -H "vLabtool" -A "Jithin B."  -F -o docs .
 cp conf.py docs/conf.py
 cp custom.css docs/_static/custom.css
 cp index.rst docs/index.rst
@@ -25,14 +34,11 @@ rm commands_proto.rst
 rm conf.rst
 rm custom_widgets.rst
 rm digital_channel.rst
-rm experiment.rst
+#rm experiment.rst
 rm packet_handler.rst
 rm template_exp.rst
-rm widgets.*
+rm widgets.* templates.* customui_rc
 rm MCP4728_class.rst
 
 make html
-mkdir _build/html/videos
-cp ../videos/bandpass.avi _build/html/videos
-cp ../videos/lissajous.ogv _build/html/videos
 cp -R ../js _build/html/

@@ -1,4 +1,4 @@
-interface module
+interface Module
 ================
 
 .. automodule:: interface

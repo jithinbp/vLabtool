@@ -5,71 +5,18 @@ import sip
 sip.setapi("QString", 2)
 sip.setapi("QVariant", 2)
 
-# Import the core and GUI elements of Qt
-from PyQt4.QtGui  import *
-from PyQt4.QtCore import *
-import PyQt4.QtGui as Widgets
-# Import the console machinery from ipython
-from IPython.qt.console.rich_ipython_widget import RichIPythonWidget
+from PyQt4 import QtGui,QtCore
 
 import sys
 import functools,random
-import scipy.optimize as optimize
-import scipy.fftpack as fftpack
 
-from Labtools.templates import template_exp
+from templates import template_exp
 import time,sys
 from customui_rc import *
 import custom_widgets as Widgets
-
-import numpy as np
-import pyqtgraph as pg
-import pyqtgraph.opengl as gl
-import sys
-
-#_fromUtf8 = QString.fromUtf8
  
-
-
-
-class QIPythonWidget(RichIPythonWidget):
-	def __init__(self,customBanner=None,*args,**kwargs):
-		print 'importing KernelManager'
-		from IPython.qt.inprocess import QtInProcessKernelManager
-		print 'import GuiSupport'
-		from IPython.lib import guisupport
-		if customBanner!=None: self.banner=customBanner
-		print 'initializing'
-		super(QIPythonWidget, self).__init__(*args,**kwargs)
-		print 'kernel manager creating'
-		self.kernel_manager = kernel_manager = QtInProcessKernelManager()
-		print 'kernel manager starting'
-		kernel_manager.start_kernel()
-		kernel_manager.kernel.gui = 'qt4'
-		self.kernel_client = kernel_client = self._kernel_manager.client()
-		kernel_client.start_channels()
-	
-		def stop():
-				kernel_client.stop_channels()
-				kernel_manager.shutdown_kernel()
-				guisupport.get_app_qt4().exit()            
-		self.exit_requested.connect(stop)
-
-	def pushVariables(self,variableDict):
-		""" Given a dictionary containing name / value pairs, push those variables to the IPython console widget """
-		self.kernel_manager.kernel.shell.push(variableDict)
-	def clearTerminal(self):
-		""" Clears the terminal """
-		self._control.clear()    
-	def printText(self,text):
-		""" Prints some plain text to the console """
-		self._append_plain_text(text)        
-	def executeCommand(self,command):
-		""" Execute a command in the frame of the console widget """
-		self._execute(command,False)
-
-
-
+import numpy as np
+import sys
 
 
 class ConvenienceClass():
@@ -87,6 +34,15 @@ class ConvenienceClass():
 
 	timers=[]
 	def __init__(self):
+		print 'initializing convenience class'
+		try:
+			import scipy.optimize as optimize
+			import scipy.fftpack as fftpack
+		except ImportError:
+			print 'imports failed for scipy.optimize,scipy.fftpack'
+			self.optimize = None;self.fftpack=None
+		else:
+			self.optimize = optimize;self.fftpack=fftpack
 		self.timers=[]
 
 	def loopTask(self,interval,func,*args):
@@ -99,7 +55,7 @@ class ConvenienceClass():
 		
 		
 		"""
-		timer = QTimer()
+		timer = QtCore.QTimer()
 		timerCallback = functools.partial(func,*args)
 		timer.timeout.connect(timerCallback)
 		timer.start(interval)
@@ -115,14 +71,14 @@ class ConvenienceClass():
 		
 		
 		"""
-		timer = QTimer()
+		timer = QtCore.QTimer()
 		timerCallback = functools.partial(func,*args)
 		timer.singleShot(interval,timerCallback)
 		self.timers.append(timer)
 
 	def random_color(self):
-		c=(random.randint(20,255),random.randint(20,255),random.randint(20,255))
-		if np.average(c)<150:
+		c=QtGui.QColor(random.randint(20,255),random.randint(20,255),random.randint(20,255))
+		if np.average(c.getRgb())<150:
 			c=self.random_color()
 		return c
 
@@ -131,7 +87,7 @@ class ConvenienceClass():
 		The contents of the dictionary 'd' are displayed in a new QWindow
 		
 		"""
-		self.tree = pg.DataTreeWidget(data=d)
+		self.tree = self.pg.DataTreeWidget(data=d)
 		self.tree.show()
 		self.tree.setWindowTitle('Data')
 		self.tree.resize(600,600)
@@ -148,9 +104,9 @@ class ConvenienceClass():
 		def mysine(x, a1, a2, a3,a4):
 		    return a4 + a1*np.sin(abs(a2)*x + a3)
 		N=len(xReal)
-		yhat = fftpack.rfft(yReal)
+		yhat = self.fftpack.rfft(yReal)
 		idx = (yhat**2).argmax()
-		freqs = fftpack.rfftfreq(N, d = (xReal[1]-xReal[0])/(2*np.pi))
+		freqs = self.fftpack.rfftfreq(N, d = (xReal[1]-xReal[0])/(2*np.pi))
 		frequency = freqs[idx]
 
 		amplitude = (yReal.max()-yReal.min())/2.0
@@ -159,7 +115,7 @@ class ConvenienceClass():
 		phase=args.get('phase',0.)
 		guess = [amplitude, frequency, phase,offset]
 		try:
-			(amplitude, frequency, phase,offset), pcov = optimize.curve_fit(mysine, xReal, yReal, guess)
+			(amplitude, frequency, phase,offset), pcov = self.optimize.curve_fit(mysine, xReal, yReal, guess)
 			ph = ((phase)*180/(np.pi))
 
 			if(frequency<0):
@@ -185,9 +141,9 @@ class ConvenienceClass():
 		if(func=='sine' or func=='damped sine'):
 			N=len(xReal)
 			offset = np.average(yReal)
-			yhat = fftpack.rfft(yReal-offset)
+			yhat = self.fftpack.rfft(yReal-offset)
 			idx = (yhat**2).argmax()
-			freqs = fftpack.rfftfreq(N, d = (xReal[1]-xReal[0])/(2*np.pi))
+			freqs = self.fftpack.rfftfreq(N, d = (xReal[1]-xReal[0])/(2*np.pi))
 			frequency = freqs[idx]
 
 			amplitude = (yReal.max()-yReal.min())/2.0
@@ -201,23 +157,33 @@ class ConvenienceClass():
 		N=len(xReal)
 		guess=args.get('guess',[])
 		try:
-			results, pcov = optimize.curve_fit(func, xReal, yReal,guess)
+			results, pcov = self.optimize.curve_fit(func, xReal, yReal,guess)
 			pcov[0]*=1e6
 			return True,results,pcov
 		except:
 			return False,[],[]
 
-class Experiment(QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidgets):		#,interface_rev4.Interface
+
+class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidgets):
+	timers=[]
 	def __init__(self,**args):
-			self.qt_app = args.get('qt_app',QApplication(sys.argv))
+			self.qt_app = args.get('qt_app',QtGui.QApplication(sys.argv))
+			self.showSplash()
 			super(Experiment, self).__init__(args.get('parent',None))
-			#interface_rev4.Interface.__init__(self)
+			self.updateSplash(10)
+			try:
+				import pyqtgraph as pg
+				import pyqtgraph.opengl as gl
+			except ImportError:
+				self.pg = None;self.gl=None
+			else:
+				self.pg = pg
+				self.gl=gl
+			self.updateSplash(10)
 			self.setupUi(self)
-			Widgets.CustomWidgets.__init__(self)
-			self.timers=[]
+			Widgets.CustomWidgets.__init__(self);self.updateSplash(10)
 			self.I = args.get('I',None)
 			self.graphContainer2_enabled=False
-			print 'HERE',self.I
 			self.graphContainer1_enabled=False
 			self.console_enabled=False
 			self.output_enabled=False
@@ -225,18 +191,19 @@ class Experiment(QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidgets):	
 			self.plot_areas=[]
 			self.plots3D=[]
 			self.plots2D=[]
+			self.axisItems=[]
 			self.total_plot_areas=0
 			self.widgetBay = False
 			#self.additional_handle = QSplitterHandle(Qt.Horizontal,self.graph_splitter)
 			#self.graph_splitter.addWidget(self.additional_handle)
 			if(args.get('showresult',True)):
-				dock = QDockWidget()
-				dock.setFeatures(QDockWidget.DockWidgetMovable|QDockWidget.DockWidgetFloatable)#|QDockWidget.DockWidgetVerticalTitleBar)
+				dock = QtGui.QDockWidget()
+				dock.setFeatures(QtGui.QDockWidget.DockWidgetMovable|QtGui.QDockWidget.DockWidgetFloatable)#|QDockWidget.DockWidgetVerticalTitleBar)
 				dock.setWindowTitle("Results")
-				self.output_text = QTextEdit()
+				self.output_text = QtGui.QTextEdit()
 				self.output_text.setReadOnly(True)
-				fr = QFrame()
-				plt = QGridLayout(fr)
+				fr = QtGui.QFrame()
+				plt = QtGui.QGridLayout(fr)
 				plt.setMargin(0)
 				plt.addWidget(self.output_text)
 				self.output_enabled=True
@@ -244,34 +211,67 @@ class Experiment(QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidgets):	
 				dock.setWidget(fr)
 				self.result_dock=dock
 				self.output_text.setStyleSheet("color: rgb(255, 255, 255);")
-				self.addDockWidget(Qt.BottomDockWidgetArea, dock)
-				def __resizeHack__():
-							self.result_dock.setMaximumHeight(100)
-							self.qt_app.processEvents()
-							self.result_dock.setMaximumHeight(2500)
-				self.delayedTask(0,__resizeHack__)
-
+				self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock)
+			else:
+				self.result_dock=False
+				self.output_enabled=False
+			self.updateSplash(10)
 			if(args.get('handler',False)):
 				self.addHandler(args.get('handler'))
+			while(self.progressBar.value()<100):
+				self.updateSplash(1)
+				time.sleep(0.01)
+
+	def updateSplash(self,x,txt=''):
+		self.progressBar.setValue(self.progressBar.value()+x)
+		if(len(txt)):self.splashMsg.setText('  '+txt)
+		self.qt_app.processEvents()
+		self.splash.repaint()
+
+	def showSplash(self):
+			import pkg_resources
+			splash_pix = QtGui.QPixmap(pkg_resources.resource_filename('vLabtool.stylesheets', "splash3.png"))
+			self.splash = QtGui.QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)
+			# adding progress bar
+			self.progressBar = QtGui.QProgressBar(self.splash)
+			self.progressBar.resize(self.splash.width(),20)
+			css = pkg_resources.resource_string('vLabtool', "stylesheets/splash.css")
+			if css:
+				self.splash.setStyleSheet(css)
+			self.splashMsg = QtGui.QLabel(self.splash);self.splashMsg.setStyleSheet("font-weight:bold;color:purple")
+			self.splash.setMask(splash_pix.mask())
+			self.splashMsg.setText('Loading....');self.splashMsg.resize(self.progressBar.width(),20)
+			self.splash.show()
+			self.splash.repaint()
 
 	
+	def run(self):
+			def __resizeHack__():
+						if self.result_dock:
+							self.result_dock.setMaximumHeight(100)
+							self.result_dock.setMaximumHeight(2500)
+			self.delayedTask(0,__resizeHack__)
+			self.show()
+			self.splash.finish(self)
+			self.qt_app.exec_()
+
 	def addPlotArea(self):
-			fr = QFrame(self.graph_splitter)
-			fr.setFrameShape(QFrame.StyledPanel)
-			fr.setFrameShadow(QFrame.Raised)
+			fr = QtGui.QFrame(self.graph_splitter)
+			fr.setFrameShape(QtGui.QFrame.StyledPanel)
+			fr.setFrameShadow(QtGui.QFrame.Raised)
 			fr.setMinimumHeight(250)
 			self.total_plot_areas+=1
 			fr.setObjectName("plot"+str(self.total_plot_areas))
-			plt = QGridLayout(fr)
+			plt = QtGui.QGridLayout(fr)
 			plt.setMargin(0)
 			self.plot_areas.append(plt)
 			return len(self.plot_areas)-1
 
 	def add3DPlot(self):
-			plot3d = gl.GLViewWidget()
+			plot3d = self.gl.GLViewWidget()
 			#gx = gl.GLGridItem();gx.rotate(90, 0, 1, 0);gx.translate(-10, 0, 0);self.plot.addItem(gx)
 			#gy = gl.GLGridItem();gy.rotate(90, 1, 0, 0);gy.translate(0, -10, 0);self.plot.addItem(gy)
-			gz = gl.GLGridItem();#gz.translate(0, 0, -10);
+			gz = self.gl.GLGridItem();#gz.translate(0, 0, -10);
 			plot3d.addItem(gz);
 			plot3d.opts['distance'] = 40
 			plot3d.opts['elevation'] = 5
@@ -283,11 +283,11 @@ class Experiment(QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidgets):	
 			return plot3d
 
 	def add2DPlot(self):
-			plot=pg.PlotWidget()
+			plot=self.pg.PlotWidget()
 			pos=self.addPlotArea()
 			self.plot_areas[pos].addWidget(plot)
 			plot.viewBoxes=[]
-			plot.addLegend(offset=(-1,1))
+			self.plotLegend=plot.addLegend(offset=(-1,1))
 			self.plots2D.append(plot)
 			return plot
 
@@ -297,8 +297,28 @@ class Experiment(QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidgets):	
 	def add3DPlots(self,num):
 			for a in range(num):yield self.add3DPlot() 
 
+	def addAxis(self,plot,**args):
+		p3 = self.pg.ViewBox()
+		ax3 = self.pg.AxisItem('right')
+		plot.plotItem.layout.addItem(ax3, 2, 3+len(self.axisItems))
+		plot.plotItem.scene().addItem(p3)
+		ax3.linkToView(p3)
+		p3.setXLink(plot.plotItem)
+		ax3.setZValue(-10000)
+		if args.get('label',False):
+			ax3.setLabel(args.get('label',False), color=args.get('color','#ffffff'))
+		plot.viewBoxes.append(p3)
+
+		p3.setGeometry(plot.plotItem.vb.sceneBoundingRect())
+		p3.linkedViewChanged(plot.plotItem.vb, p3.XAxis)
+		## Handle view resizing 
+		Callback = functools.partial(self.updateViews,plot)		
+		plot.getViewBox().sigStateChanged.connect(Callback)
+		self.axisItems.append(ax3)
+		return p3
+		
 	def enableRightAxis(self,plot):
-		p = pg.ViewBox()
+		p = self.pg.ViewBox()
 		plot.showAxis('right')
 		plot.setMenuEnabled(False)
 		plot.scene().addItem(p)
@@ -309,21 +329,23 @@ class Experiment(QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidgets):	
 		plot.getViewBox().sigStateChanged.connect(Callback)
 		return p
 
+
 	def updateViews(self,plot):
 		for a in plot.viewBoxes:
 			a.setGeometry(plot.getViewBox().sceneBoundingRect())
+			a.linkedViewChanged(plot.plotItem.vb, a.XAxis)
 
 
 	def configureWidgetBay(self,name='controls'):
 		if(self.widgetBay):return
-		dock = QDockWidget()
-		dock.setFeatures(QDockWidget.DockWidgetMovable|QDockWidget.DockWidgetFloatable)#|QDockWidget.DockWidgetVerticalTitleBar)
+		dock = QtGui.QDockWidget()
+		dock.setFeatures(QtGui.QDockWidget.DockWidgetMovable|QtGui.QDockWidget.DockWidgetFloatable)#|QDockWidget.DockWidgetVerticalTitleBar)
 		dock.setWindowTitle(name)
-		fr = QFrame()
+		fr = QtGui.QFrame()
 		fr.setStyleSheet("QLineEdit {color: rgb(0,0,0);}QPushButton, QLabel ,QComboBox{color: rgb(255, 255, 255);}")
 		dock.setWidget(fr)
-		self.addDockWidget(Qt.LeftDockWidgetArea, dock)
-		self.frame_area = QVBoxLayout(fr)
+		self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
+		self.frame_area = QtGui.QVBoxLayout(fr)
 		self.frame_area.setMargin(0)
 		self.widgetBay = True
 	
@@ -350,33 +372,49 @@ class Experiment(QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidgets):	
 		except:
 			print 'Device Not Connected.'
 		
-	def addConsole(self,**args):
-			dock = QDockWidget()
-			dock.setFeatures(QDockWidget.DockWidgetMovable|QDockWidget.DockWidgetFloatable)#|QDockWidget.DockWidgetVerticalTitleBar)
-			dock.setWindowTitle("plot"+str(self.total_plot_areas+1))
-			fr = QFrame()
+  	def addConsole(self,**args):
+  			#read arguments
+  			self.I = args.get('I',self.I)
+  			self.showSplash();self.updateSplash(10,'Importing iPython Widgets...')
+			from iPythonEmbed import QIPythonWidget;self.updateSplash(10,'Creating Dock Widget...')
+			#-------create an area for it to sit------
+			dock = QtGui.QDockWidget()
+			dock.setFeatures(QtGui.QDockWidget.DockWidgetMovable|QtGui.QDockWidget.DockWidgetFloatable)#|QDockWidget.DockWidgetVerticalTitleBar)
+			dock.setWindowTitle("Interactive Python Console")
+			fr = QtGui.QFrame();self.updateSplash(10)
 			dock.setWidget(fr)
-			self.addDockWidget(Qt.BottomDockWidgetArea, dock)
-			fr.setFrameShape(QFrame.StyledPanel)
-			fr.setFrameShadow(QFrame.Raised)
+			self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock)
+			fr.setFrameShape(QtGui.QFrame.StyledPanel)
+			fr.setFrameShadow(QtGui.QFrame.Raised);self.updateSplash(10,'Embedding IPython Widget...')
 
-			self.ipyConsole = QIPythonWidget(customBanner="This is an interactive Python Console\n")
-			layout = QVBoxLayout(fr)
+			#--------instantiate the iPython class-------
+			self.ipyConsole = QIPythonWidget(customBanner="An interactive Python Console!\n");self.updateSplash(10)
+			layout = QtGui.QVBoxLayout(fr)
 			layout.setMargin(0)
-			layout.addWidget(self.ipyConsole)        
+			layout.addWidget(self.ipyConsole);self.updateSplash(10,'Preparing default command dictionary...')        
 			cmdDict = {"delayedTask":self.delayedTask,"loopTask":self.loopTask,"addWidget":self.addWidget,"setCommand":self.setCommand,"Widgets":Widgets}
 			#if self.graphContainer1_enabled:cmdDict["graph"]=self.graph
 			if self.I :
 				cmdDict["I"]=self.I
 				self.ipyConsole.printText("Access hardware using the Instance 'I'.  e.g.  I.get_average_voltage('CH1')")
-			self.ipyConsole.pushVariables(cmdDict)
+			self.ipyConsole.pushVariables(cmdDict);self.updateSplash(10,'Winding up...')
 			self.console_enabled=True
+			self.splash.finish(dock);self.updateSplash(10)
+			dock.widget().setMaximumSize(QtCore.QSize(self.width(), self.height()/3))
+			dock.widget().setMinimumSize(QtCore.QSize(self.width(), self.height()/3))
+			print dock.width(),dock.height()
+			def dockResize():
+				dock.widget().setMaximumSize(65535,65535)
+				dock.widget().setMinimumSize(60,60)
+			self.delayedTask(0,dockResize)
+			return self.ipyConsole
 
-
+			
+			
 	def new3dSurface(self,plot,**args):
 			import scipy.ndimage as ndi
-			surface3d = gl.GLSurfacePlotItem(z=np.array([[0.1,0.1],[0.1,0.1]]), **args)
-			#surface3d.shader()['colorMap']=pg.ColorMap(np.array([0.2,0.4,0.6]),np.array([[255,0,0,255],[0,255,0,255],[0,255,255,255]])).getLookupTable()
+			surface3d = self.gl.GLSurfacePlotItem(z=np.array([[0.1,0.1],[0.1,0.1]]), **args)
+			#surface3d.shader()['colorMap']=self.pg.ColorMap(np.array([0.2,0.4,0.6]),np.array([[255,0,0,255],[0,255,0,255],[0,255,255,255]])).getLookupTable()
 			#surface3d.shader()['colorMap'] = np.array([0.2, 2, 0.5, 0.2, 1, 1, 0.2, 0, 2])
 			plot.addItem(surface3d)
 			return surface3d
@@ -386,7 +424,7 @@ class Experiment(QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidgets):	
 
 	def draw3dLine(self,plot,x,y,z,color=(100,100,100)):
 			pts = np.vstack([x,y,z]).transpose()
-			plt = gl.GLLinePlotItem(pos=pts, color=pg.glColor(color),width=2)
+			plt = self.gl.GLLinePlotItem(pos=pts, color=self.pg.glColor(color),width=2)
 			plot.addItem(plt)
 			plot.plotLines3D.append(plt)
 			return plt
@@ -404,7 +442,7 @@ class Experiment(QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidgets):	
 
 			def write(self,arg):
 				f=open('b.txt','at')
-				self.cursor.movePosition(QTextCursor.End)
+				self.cursor.movePosition(QtGui.QTextCursor.End)
 				self.console.setTextCursor(self.cursor)
 				self.console.insertPlainText(arg)
 				#self.scroll.setValue(self.scroll.maximum())
@@ -421,17 +459,17 @@ class Experiment(QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidgets):	
 	def addCurve(self,plot,name='',col=(255,255,255),axis='left'):
 		#if(len(name)):curve = plot.plot(name=name)
 		#else:curve = plot.plot()
-		if(len(name)):curve = pg.PlotCurveItem(name=name)
-		else:curve = pg.PlotCurveItem()
+		if(len(name)):curve = self.pg.PlotCurveItem(name=name)
+		else:curve = self.pg.PlotCurveItem()
 		plot.addItem(curve)
 		curve.setPen(color=col, width=1)
 		return curve
 
-	def rebuildLegend(plot,self):
+	def rebuildLegend(self,plot):
 		self.plotLegend = plot.addLegend(offset=(-10,30))
 
 	def loopTask(self,interval,func,*args):
-			timer = QTimer()
+			timer = QtCore.QTimer()
 			timerCallback = functools.partial(func,*args)
 			timer.timeout.connect(timerCallback)
 			timer.start(interval)
@@ -439,21 +477,14 @@ class Experiment(QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidgets):	
 			return timer
 		
 	def delayedTask(self,interval,func,*args):
-			timer = QTimer()
+			timer = QtCore.QTimer()
 			timerCallback = functools.partial(func,*args)
 			timer.singleShot(interval,timerCallback)
 			self.timers.append(timer)
 
-	def run(self):
-			self.show()
-			self.qt_app.exec_()
-
-
-	def add_a_widget(self):
-			self.addButton('testing')
 	
 	def addButton(self,name,command,*args):
-			b=QPushButton(None)
+			b=QtGui.QPushButton(None)
 			b.setText(name)
 			self.updateWidgetBay(b)
 			self.setCommand(b,"clicked()",command,*args)
@@ -473,5 +504,24 @@ class Experiment(QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidgets):	
 			buttonCallback = functools.partial(slot,*args)
 			QObject.connect(widget, SIGNAL(signal), buttonCallback)
 
+ 
+ 	'''
+	class WorkThread(QtCore.QThread):
+		punched = QtCore.pyqtSignal()		 
+		def __init__(self):
+			QtCore.QThread.__init__(self)			 
+		def __del__(self):
+			self.wait()			 
+		def run(self):
+			for i in range(11):
+				time.sleep(0.5)
+				self.punched.emit()
+			self.terminate()
 
+	progress = QtGui.QProgressDialog("Copying...", "Cancel", 0, 10)
+	progress.show()
+	T = self.WorkThread()
+	T.punched.connect(lambda: progress.setValue(progress.value()+1))
+	T.start() 
+	'''
 

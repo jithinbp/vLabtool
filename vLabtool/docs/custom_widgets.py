@@ -8,8 +8,7 @@ os.environ['QT_API'] = 'pyqt'
 sip.setapi("QString", 2)
 sip.setapi("QVariant", 2)
 # Import the core and GUI elements of Qt
-from PyQt4.QtGui  import *
-from PyQt4.QtCore import *
+from PyQt4  import QtGui,QtCore
 
 import interface
 
@@ -37,30 +36,26 @@ class CustomWidgets:
 			buttonCallback = functools.partial(slot,*args)
 			QObject.connect(widget, SIGNAL(signal), buttonCallback)
 
-	class sineHandler(QFrame,Ui_Sliding):
-		def __init__(self,chan):
+	class sineHandler(QtGui.QFrame,Ui_Sliding):
+		def __init__(self):
 			super(CustomWidgets.sineHandler, self).__init__()
-			#QFrame.__init__(self)
+			#QtGui.QFrame.__init__(self)
 			#Ui_Sliding.__init__(self)
 			self.I=interface.Interface()
 			self.setupUi(self)
-			self.name=['SINE1','SINE2'][chan-1]
+			self.name='DDS'
 			self.label.setText(self.name)
-			self.chan=chan
 			self.slider.setMinimum(0)
 			self.slider.setMaximum(500000)
 		def setValue(self,val):
 			self.label.setText(self.name+':'+str(val)+' Hz')
-			if self.chan==1:self.I.set_sine1(val)
-			elif self.chan==2:self.I.set_sine2(val)
+			self.I.set_sine(val)
 
-	def widget_sine1(self):
-		self.updateWidgetBay(self.sineHandler(1))
+	def widget_sine(self):
+		self.updateWidgetBay(self.sineHandler())
 
-	def widget_sine2(self):
-		self.updateWidgetBay(self.sineHandler(2))
 
-	class gainHandler(QFrame,Ui_Sliding):
+	class gainHandler(QtGui.QFrame,Ui_Sliding):
 		def __init__(self,chan,alternate_name=None):
 			super(CustomWidgets.gainHandler, self).__init__()
 			self.I=interface.Interface()
@@ -90,10 +85,10 @@ class CustomWidgets:
 		self.updateWidgetBay(self.gainHandler('CH5','CH5-CH9,PCS'))
 
 
-	class voltHandler(QFrame,Ui_Clicking):
+	class voltHandler(QtGui.QFrame,Ui_Clicking):
 		def __init__(self,chan):
 			super(CustomWidgets.voltHandler, self).__init__()
-			#QFrame.__init__(self)
+			#QtGui.QFrame.__init__(self)
 			#Ui_Sliding.__init__(self)
 			self.I=interface.Interface()
 			self.setupUi(self)
@@ -116,10 +111,10 @@ class CustomWidgets:
 		self.updateWidgetBay(self.voltHandler('CH5'))
 
 
-	class voltAllHandler(QFrame,Ui_ClickingOptions):
+	class voltAllHandler(QtGui.QFrame,Ui_ClickingOptions):
 		def __init__(self):
 			super(CustomWidgets.voltAllHandler, self).__init__()
-			#QFrame.__init__(self)
+			#QtGui.QFrame.__init__(self)
 			#Ui_Sliding.__init__(self)
 			self.I=interface.Interface()
 			self.setupUi(self)
@@ -136,7 +131,7 @@ class CustomWidgets:
 
 
 	def widget_inductance(self):
-		class Handler(QFrame,Ui_Clicking):
+		class Handler(QtGui.QFrame,Ui_Clicking):
 			def __init__(self):
 				super(Handler, self).__init__()
 				self.I=interface.Interface()
@@ -148,10 +143,10 @@ class CustomWidgets:
 
 		self.updateWidgetBay(Handler())
 
-	class timingHandler(QFrame,Ui_ClickingOptions):
+	class timingHandler(QtGui.QFrame,Ui_ClickingOptions):
 		def __init__(self,cmd):
 			super(CustomWidgets.timingHandler, self).__init__()
-			#QFrame.__init__(self)
+			#QtGui.QFrame.__init__(self)
 			#Ui_Sliding.__init__(self)
 			self.I=interface.Interface()
 			self.setupUi(self)
@@ -187,7 +182,7 @@ class CustomWidgets:
 	def widget_pulse(self):
 		self.updateWidgetBay(self.timingHandler('pulse_time'))
 
-	class sourceHandler(QFrame,Ui_Sliding):
+	class sourceHandler(QtGui.QFrame,Ui_Sliding):
 		def __init__(self,name):
 			super(CustomWidgets.sourceHandler, self).__init__()
 			self.I=interface.Interface()
@@ -198,19 +193,19 @@ class CustomWidgets:
 			if name=='pvs2':
 				self.slider.setRange(0,4095)
 			elif name=='pvs3':
-				self.slider.setRange(0,31)
+				self.slider.setRange(0,4095)
 			elif name=='pcs':
-				self.slider.setRange(0,31)
+				self.slider.setRange(0,4095)
 
 		def setValue(self,val):
 			if self.name=='pvs1':
-				retval=self.I.set_pvs1(val*10./4095 - 5)
+				retval=self.I.DAC.__setRawVoltage__(3,val)
 			elif self.name=='pvs2':
-				retval=self.I.set_pvs2(val*3.3/4095)
+				retval=self.I.DAC.__setRawVoltage__(2,val)
 			elif self.name=='pvs3':
-				retval=self.I.set_pvs3(val*6.6/31 - 3.3)
+				retval=self.I.DAC.__setRawVoltage__(0,val)
 			elif self.name=='pcs':
-				retval=self.I.set_pcs(val*3.3/31)
+				retval=self.I.DAC.__setRawVoltage__(0,val)
 
 			self.label.setText(self.name+': %.3f'%(retval))
 
