@@ -194,6 +194,7 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
 			self.axisItems=[]
 			self.total_plot_areas=0
 			self.widgetBay = False
+			self.help_url = 'interface.html'
 			#self.additional_handle = QSplitterHandle(Qt.Horizontal,self.graph_splitter)
 			#self.graph_splitter.addWidget(self.additional_handle)
 			if(args.get('showresult',True)):
@@ -412,23 +413,19 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
  	def showHelp(self):
  		print 'HELP'
  		from PyQt4 import QtWebKit
-		dock = QtGui.QDockWidget()
-		dock.setFeatures(QtGui.QDockWidget.DockWidgetMovable|QtGui.QDockWidget.DockWidgetFloatable)
+		dock = QtGui.QMainWindow()
 		self.helpView = QtWebKit.QWebView()
-		dock.setWidget(self.helpView)
+		dock.setCentralWidget(self.helpView)
 		dock.setWindowTitle("Help window")
-		self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock)
-		dock.setFloating(True)
-		def dockResize():
-			dock.widget().setMaximumSize(65535,65535)
-			dock.widget().setMinimumSize(60,60)
-		self.delayedTask(0,dockResize)
+		dock.show()
 		import pkg_resources
-		self.help_url = 'helpfiles/interface.html'
-		URL = pkg_resources.resource_filename(__name__, self.help_url)
-		print URL
+		URL = pkg_resources.resource_filename(__name__, os.path.join('helpfiles',self.help_url))
 		self.helpView.setUrl(QtCore.QUrl(URL))			
-			
+		self.helpWindow = dock
+
+	def setHelpFile(self,filename):
+		self.help_url=filename
+		
 	def new3dSurface(self,plot,**args):
 			import scipy.ndimage as ndi
 			surface3d = self.gl.GLSurfacePlotItem(z=np.array([[0.1,0.1],[0.1,0.1]]), **args)

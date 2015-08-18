@@ -45,7 +45,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 		if not args.DeviceNumber: args.DeviceNumber=1
 		dv=int(args.DeviceNumber)
 		self.I = interface.Interface(devnum=dv)
-		self.setWindowTitle('LabToolSuite : '+self.I.H.version_string)
+		self.setWindowTitle('vLabtool : '+self.I.H.version_string)
 		
 		self.dacval=0
 
