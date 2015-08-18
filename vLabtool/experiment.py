@@ -221,7 +221,6 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
 			while(self.progressBar.value()<100):
 				self.updateSplash(1)
 				time.sleep(0.01)
-			self.showHelp()
 
 	def updateSplash(self,x,txt=''):
 		self.progressBar.setValue(self.progressBar.value()+x)
