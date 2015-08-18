@@ -120,7 +120,7 @@ class Interface(object):
 				
 
 		
-		self.digital_channel_names=['ID1','ID2','ID3','ID4','COMP','CH1']
+		self.digital_channel_names=['ID1','ID2','ID3','ID4','-','CH1']
 		self.dchans=[digital_channel(a) for a in range(4)]
 		#This array of four instances of digital_channel is used to store data retrieved from the
 		#logic analyzer section of the device.  It also contains methods to generate plottable data
@@ -833,7 +833,7 @@ class Interface(object):
 	#-------------------------------------------------------------------------------------------------------------------#
 	def __calcDChan__(self,name):
 		"""
-		accepts a string represention of a digital input ( 'ID1','ID2','ID3','ID4','LMETER','CH4' ) and returns a corresponding number
+		accepts a string represention of a digital input ( 'ID1','ID2','ID3','ID4','CH1' ) and returns a corresponding number
 		"""
 		
 		if name in self.digital_channel_names:
@@ -883,7 +883,7 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		channel		The input to measure frequency from. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH4'
+		channel		The input to measure frequency from. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
 		timeout		This is a blocking call which will wait for one full wavelength before returning the
 				calculated frequency.
 				Use the timeout option if you're unsure of the input signal.
@@ -931,7 +931,7 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		channel		The input to measure time between two rising edges.'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH4'
+		channel		The input to measure time between two rising edges.'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
 		timeout		Use the timeout option if you're unsure of the input signal time period.
 				returns 0 if timed out
 		==============	============================================================================================
@@ -963,7 +963,7 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		channel		The input to measure time between two falling edges. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH4'
+		channel		The input to measure time between two falling edges. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
 		timeout		Use the timeout option if you're unsure of the input signal time period.
 				returns 0 if timed out
 		==============	============================================================================================
@@ -999,7 +999,7 @@ class Interface(object):
 		==============	============================================================================================
 		**Arguments** 
 		==============	============================================================================================
-		channel		The input pin to measure wavelength and high time. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH4'
+		channel		The input pin to measure wavelength and high time. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
 		timeout		Use the timeout option if you're unsure of the input signal time period.
 				returns 0 if timed out
 		==============	============================================================================================
@@ -1043,7 +1043,7 @@ class Interface(object):
 		==============	============================================================================================
 		channel1		The input pin to measure first logic level change
 		channel1		The input pin to measure second logic level change
-							* 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH4'
+							* 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
 							
 		edge1			The type of level change to detect in order to start the timer
 							* 'rising'
@@ -1100,7 +1100,7 @@ class Interface(object):
 		**Arguments** 
 		==============	============================================================================================
 		channel			The input pin to measure pulse width from.
-							* 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH4'
+							* 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
 		timeout			Use the timeout option if you're unsure of the input signal time period.
 						returns 0 if timed out
 		==============	============================================================================================

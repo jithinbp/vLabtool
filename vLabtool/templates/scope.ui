@@ -236,16 +236,6 @@ border-color: rgb(29, 122, 162);
               <string>CH2</string>
              </property>
             </item>
-            <item>
-             <property name="text">
-              <string>CH3</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>CH4</string>
-             </property>
-            </item>
            </widget>
            <widget class="QLabel" name="label_48">
             <property name="geometry">
@@ -1296,12 +1286,12 @@ border-color: rgb(29, 122, 162);
               </item>
               <item>
                <property name="text">
-                <string>LMETER</string>
+                <string>-</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>CH4</string>
+                <string>CH1</string>
                </property>
               </item>
              </widget>
@@ -1385,12 +1375,12 @@ border-color: rgb(29, 122, 162);
               </item>
               <item>
                <property name="text">
-                <string>LMETER</string>
+                <string>-</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>CH4</string>
+                <string>CH1</string>
                </property>
               </item>
              </widget>
@@ -1552,12 +1542,12 @@ border-color: rgb(29, 122, 162);
             </item>
             <item>
              <property name="text">
-              <string>LMETER</string>
+              <string>-</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>CH4</string>
+              <string>CH1</string>
              </property>
             </item>
            </widget>
@@ -1618,12 +1608,12 @@ border-color: rgb(29, 122, 162);
               </item>
               <item>
                <property name="text">
-                <string>LMETER</string>
+                <string>-</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>CH4</string>
+                <string>CH1</string>
                </property>
               </item>
              </widget>

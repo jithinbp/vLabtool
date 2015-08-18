@@ -200,6 +200,7 @@ border-color: rgb(29, 122, 162);
      <string>help!</string>
     </property>
     <addaction name="actionShow_help_window"/>
+    <addaction name="actionProgrammer_s_manual"/>
    </widget>
    <addaction name="menuVoltmeters_2"/>
    <addaction name="menuAmplifiers_2"/>
@@ -303,6 +304,11 @@ border-color: rgb(29, 122, 162);
   <action name="actionShow_help_window">
    <property name="text">
     <string>show help window</string>
+   </property>
+  </action>
+  <action name="actionProgrammer_s_manual">
+   <property name="text">
+    <string>full programmer's manual</string>
    </property>
   </action>
  </widget>
@@ -598,6 +604,22 @@ border-color: rgb(29, 122, 162);
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionProgrammer_s_manual</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showFullHelp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>424</x>
+     <y>239</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>add_a_widget()</slot>
@@ -627,5 +649,6 @@ border-color: rgb(29, 122, 162);
   <slot>widget_pvs3()</slot>
   <slot>widget_pcs()</slot>
   <slot>showHelp()</slot>
+  <slot>showFullHelp()</slot>
  </slots>
 </ui>

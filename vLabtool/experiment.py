@@ -411,7 +411,6 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
 		return self.ipyConsole
 
  	def showHelp(self):
- 		print 'HELP'
  		from PyQt4 import QtWebKit
 		dock = QtGui.QMainWindow()
 		self.helpView = QtWebKit.QWebView()
@@ -422,6 +421,19 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
 		URL = pkg_resources.resource_filename(__name__, os.path.join('helpfiles',self.help_url))
 		self.helpView.setUrl(QtCore.QUrl(URL))			
 		self.helpWindow = dock
+
+ 	def showFullHelp(self):
+ 		from PyQt4 import QtWebKit
+		dock = QtGui.QMainWindow()
+		self.helpView = QtWebKit.QWebView()
+		dock.setCentralWidget(self.helpView)
+		dock.setWindowTitle("Help window")
+		dock.show()
+		import pkg_resources
+		URL = pkg_resources.resource_filename(__name__, os.path.join('helpfiles','interface.html'))
+		self.helpView.setUrl(QtCore.QUrl(URL))			
+		self.fullHelpWindow = dock
+
 
 	def setHelpFile(self,filename):
 		self.help_url=filename

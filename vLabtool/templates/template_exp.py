@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'exp5.ui'
 #
-# Created: Tue Aug 18 15:27:58 2015
+# Created: Tue Aug 18 22:35:12 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -174,6 +174,8 @@ class Ui_MainWindow(object):
         self.actionPCS.setObjectName(_fromUtf8("actionPCS"))
         self.actionShow_help_window = QtGui.QAction(MainWindow)
         self.actionShow_help_window.setObjectName(_fromUtf8("actionShow_help_window"))
+        self.actionProgrammer_s_manual = QtGui.QAction(MainWindow)
+        self.actionProgrammer_s_manual.setObjectName(_fromUtf8("actionProgrammer_s_manual"))
         self.menuVoltmeters_2.addAction(self.actionCH1meter)
         self.menuVoltmeters_2.addAction(self.actionCH2meter)
         self.menuVoltmeters_2.addAction(self.actionCH3meter)
@@ -192,6 +194,7 @@ class Ui_MainWindow(object):
         self.menuTiming.addAction(self.actionHigh_Frequency)
         self.menuConsole.addAction(self.actionInsert_Console)
         self.menuHelp.addAction(self.actionShow_help_window)
+        self.menuHelp.addAction(self.actionProgrammer_s_manual)
         self.menuBar.addAction(self.menuVoltmeters_2.menuAction())
         self.menuBar.addAction(self.menuAmplifiers_2.menuAction())
         self.menuBar.addAction(self.menuWaveform_Generators_2.menuAction())
@@ -219,6 +222,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionPVS_3, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.widget_pvs3)
         QtCore.QObject.connect(self.actionPCS, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.widget_pcs)
         QtCore.QObject.connect(self.actionShow_help_window, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.showHelp)
+        QtCore.QObject.connect(self.actionProgrammer_s_manual, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.showFullHelp)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -250,4 +254,5 @@ class Ui_MainWindow(object):
         self.actionPVS_3.setText(_translate("MainWindow", "PVS 3", None))
         self.actionPCS.setText(_translate("MainWindow", "PCS", None))
         self.actionShow_help_window.setText(_translate("MainWindow", "show help window", None))
+        self.actionProgrammer_s_manual.setText(_translate("MainWindow", "full programmer\'s manual", None))
 

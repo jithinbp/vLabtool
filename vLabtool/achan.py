@@ -33,7 +33,7 @@ calfacs['AN2']=[np.poly1d([0, 3.3/1023., 0])] #1 gain. normal channels
 calfacs['AN3']=[np.poly1d([0, 3.3/1023., 0])] #1 gain. normal channels
 '''
 #-----------------------Classes for input sources----------------------
-allAnalogChannels = ['CH1','CH2','CH3','CH4','CH5','CH6','CH7','I2V','V+','SEN','CAP','AN2','AN3']
+allAnalogChannels = ['CH1','CH2','CH3','CH4','CH5','CH6','CH7','I2V','V+','SEN','CAP','AN2','AN3','5V']
 
 multiplexedChannels = ['CH1','I2V','CH3','CH4','CH5','CH6','CH7','V+']
 bipolars = ['CH1','I2V','CH3']
@@ -46,7 +46,7 @@ inputRanges={'CH1':[16.5,-16.5],	#Specify inverted channels explicitly by revers
 'I2V':[3.3e-3,-3.3e-3],					#connected to current to voltage convertor
 'V+':[0,36.3],
 'CH4':[0,3.3],'CH5':[0,3.3],'CH6':[0,3.3],'CH7':[0,3.3],
-'SEN':[0,3.3],'CAP':[0,3.3],'AN2':[0,3.3],'AN3':[0,3.3]
+'SEN':[0,3.3],'CAP':[0,3.3],'AN2':[0,3.3],'AN3':[0,3.3],'5V':[0,6.6]
 }
 
 picADCMultiplex={'CH2':0}
