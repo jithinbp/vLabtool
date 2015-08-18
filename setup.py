@@ -36,6 +36,21 @@ class CustomInstall(install):
 		install_udev_rules(True)
 		install.run(self)
 
+data_files = []
+def subdirs(a_dir):
+    return [name for name in os.listdir(a_dir)
+            if os.path.isdir(os.path.join(a_dir, name))]
+
+directories=subdirs('vLabtool/helpfiles/')
+directories.append('')
+for directory in directories:
+	directory = 'vLabtool/helpfiles/'+directory
+	files = os.listdir(directory)
+	files = [name for name in files	if not os.path.isdir(os.path.join(directory, name))]
+	files = [os.path.join(directory,a) for a in files]
+	data_files.append((directory,files))
+
+print data_files
 
 setup(name='vLabtool',
 	version='0.0.2',
@@ -46,6 +61,6 @@ setup(name='vLabtool',
 	install_requires = ['numpy>=1.8.1','pyqtgraph>=0.9.10'],
 	packages=find_packages(),#['Labtools', 'Labtools.widgets'],
 	scripts=["vLabtool/bin/"+a for a in os.listdir("vLabtool/bin/")],
-	package_data={'': ['*.css','*.png']},
+	package_data={'': ['*.css','*.png','*.html','*.css','*.js','*.png','*.jpg','*.jpeg','*.htm']},
 	cmdclass={'install': CustomInstall},
 	)
