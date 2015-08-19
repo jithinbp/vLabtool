@@ -58,5 +58,6 @@ class Handler(QFrame,Ui_Form):
 if __name__ == "__main__":
 	Exp=experiment.Experiment(parent=None,showresult=False)
 	handler = Handler(Exp)
+	Exp.setHelpUrl('http://www.electronics-tutorials.ws/blog/i-v-characteristic-curves.html')
 	Exp.addHandler(handler)
 	Exp.run()
