@@ -139,6 +139,7 @@ class Handler(QFrame,ConvenienceClass,Ui_Form):
 
 if __name__ == "__main__":
 	Exp=Experiment(parent=None,graph2D=True,showresult=True)
+	Exp.setHelpUrl('http://www.electronics-tutorials.ws/amplifier/amp_2.html')
 	handler = Handler(Exp)
 	Exp.addHandler(handler)
 	Exp.run()

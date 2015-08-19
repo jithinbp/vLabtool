@@ -233,6 +233,7 @@ class Handler(QtGui.QFrame,ConvenienceClass,Ui_Form):
 if __name__ == "__main__":
 	handler = Handler(Exp)
 	Exp.addHandler(handler)
+	Exp.setHelpUrl('https://hackaday.io/project/6490-a-versatile-labtool/log/20189-nrf24l01-based-wireless-nodes')
 	Exp.run()
 	handler.I.NRF.stop_token_manager()
 	handler.I.restoreStandalone()

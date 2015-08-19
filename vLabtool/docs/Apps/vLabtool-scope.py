@@ -1,14 +1,8 @@
-'''
-
-Help data
-
-sadsad
-as
-s
-s
-
-'''
 #!/usr/bin/python
+'''
+oscilloscope for the vLabtool.
+Also includes control widgets, and a logic analyzer
+'''
 
 from argparse import ArgumentParser
 

@@ -50,6 +50,7 @@
   <h1>Source code for experiment</h1><div class="highlight"><pre>
 <span class="c"># Set the QT API to PyQt4</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pkg_resources</span>
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;QT_API&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;pyqt&#39;</span>
 <span class="kn">import</span> <span class="nn">sip</span>
 <span class="n">sip</span><span class="o">.</span><span class="n">setapi</span><span class="p">(</span><span class="s">&quot;QString&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
@@ -244,7 +245,7 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">axisItems</span><span class="o">=</span><span class="p">[]</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">total_plot_areas</span><span class="o">=</span><span class="mi">0</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">widgetBay</span> <span class="o">=</span> <span class="bp">False</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">help_url</span> <span class="o">=</span> <span class="s">&#39;interface.html&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">help_url</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;helpfiles&#39;</span><span class="p">,</span><span class="s">&#39;interface.html&#39;</span><span class="p">))</span>
 			<span class="c">#self.additional_handle = QSplitterHandle(Qt.Horizontal,self.graph_splitter)</span>
 			<span class="c">#self.graph_splitter.addWidget(self.additional_handle)</span>
 			<span class="k">if</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;showresult&#39;</span><span class="p">,</span><span class="bp">True</span><span class="p">)):</span>
@@ -467,9 +468,7 @@
 		<span class="n">dock</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">helpView</span><span class="p">)</span>
 		<span class="n">dock</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s">&quot;Help window&quot;</span><span class="p">)</span>
 		<span class="n">dock</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-		<span class="kn">import</span> <span class="nn">pkg_resources</span>
-		<span class="n">URL</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;helpfiles&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">help_url</span><span class="p">))</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">helpView</span><span class="o">.</span><span class="n">setUrl</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QUrl</span><span class="p">(</span><span class="n">URL</span><span class="p">))</span>			
+		<span class="bp">self</span><span class="o">.</span><span class="n">helpView</span><span class="o">.</span><span class="n">setUrl</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QUrl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">help_url</span><span class="p">))</span>			
 		<span class="bp">self</span><span class="o">.</span><span class="n">helpWindow</span> <span class="o">=</span> <span class="n">dock</span>
 </div>
 <div class="viewcode-block" id="Experiment.showFullHelp"><a class="viewcode-back" href="../experiment.html#experiment.Experiment.showFullHelp">[docs]</a> 	<span class="k">def</span> <span class="nf">showFullHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -479,14 +478,16 @@
 		<span class="n">dock</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">helpView</span><span class="p">)</span>
 		<span class="n">dock</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s">&quot;Help window&quot;</span><span class="p">)</span>
 		<span class="n">dock</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-		<span class="kn">import</span> <span class="nn">pkg_resources</span>
 		<span class="n">URL</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;helpfiles&#39;</span><span class="p">,</span><span class="s">&#39;interface.html&#39;</span><span class="p">))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">helpView</span><span class="o">.</span><span class="n">setUrl</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QUrl</span><span class="p">(</span><span class="n">URL</span><span class="p">))</span>			
 		<span class="bp">self</span><span class="o">.</span><span class="n">fullHelpWindow</span> <span class="o">=</span> <span class="n">dock</span>
 
 </div>
-<div class="viewcode-block" id="Experiment.setHelpFile"><a class="viewcode-back" href="../experiment.html#experiment.Experiment.setHelpFile">[docs]</a>	<span class="k">def</span> <span class="nf">setHelpFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">help_url</span><span class="o">=</span><span class="n">filename</span>
+<div class="viewcode-block" id="Experiment.setHelpUrl"><a class="viewcode-back" href="../experiment.html#experiment.Experiment.setHelpUrl">[docs]</a>	<span class="k">def</span> <span class="nf">setHelpUrl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">url</span><span class="p">):</span>
+		<span class="k">if</span> <span class="s">&#39;http&#39;</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">help_url</span> <span class="o">=</span> <span class="n">url</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">help_url</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;helpfiles&#39;</span><span class="p">,</span><span class="n">url</span><span class="p">))</span>
 		</div>
 <div class="viewcode-block" id="Experiment.new3dSurface"><a class="viewcode-back" href="../experiment.html#experiment.Experiment.new3dSurface">[docs]</a>	<span class="k">def</span> <span class="nf">new3dSurface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">plot</span><span class="p">,</span><span class="o">**</span><span class="n">args</span><span class="p">):</span>
 			<span class="kn">import</span> <span class="nn">scipy.ndimage</span> <span class="kn">as</span> <span class="nn">ndi</span>

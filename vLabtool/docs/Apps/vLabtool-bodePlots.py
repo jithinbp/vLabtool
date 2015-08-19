@@ -129,6 +129,7 @@ class Handler(QtGui.QFrame,Ui_Form):
 
 if __name__ == "__main__":
 	Exp=Experiment(parent=None,showresult=False)
+	Exp.setHelpUrl('https://en.wikipedia.org/wiki/Bode_plot')
 	handler = Handler()
 	handler.I.set_gain('CH1',1)	#CHANGE GAIN 
 	handler.I.set_gain('CH2',1)	#CHANGE GAIN 
