@@ -1,4 +1,4 @@
-SPI_class Module
+SPI_class module
 ================
 
 .. automodule:: SPI_class

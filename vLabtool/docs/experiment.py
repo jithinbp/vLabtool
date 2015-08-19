@@ -194,6 +194,7 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
 			self.axisItems=[]
 			self.total_plot_areas=0
 			self.widgetBay = False
+			self.help_url = 'interface.html'
 			#self.additional_handle = QSplitterHandle(Qt.Horizontal,self.graph_splitter)
 			#self.graph_splitter.addWidget(self.additional_handle)
 			if(args.get('showresult',True)):
@@ -373,44 +374,70 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
 			print 'Device Not Connected.'
 		
   	def addConsole(self,**args):
-  			#read arguments
-  			self.I = args.get('I',self.I)
-  			self.showSplash();self.updateSplash(10,'Importing iPython Widgets...')
-			from iPythonEmbed import QIPythonWidget;self.updateSplash(10,'Creating Dock Widget...')
-			#-------create an area for it to sit------
-			dock = QtGui.QDockWidget()
-			dock.setFeatures(QtGui.QDockWidget.DockWidgetMovable|QtGui.QDockWidget.DockWidgetFloatable)#|QDockWidget.DockWidgetVerticalTitleBar)
-			dock.setWindowTitle("Interactive Python Console")
-			fr = QtGui.QFrame();self.updateSplash(10)
-			dock.setWidget(fr)
-			self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock)
-			fr.setFrameShape(QtGui.QFrame.StyledPanel)
-			fr.setFrameShadow(QtGui.QFrame.Raised);self.updateSplash(10,'Embedding IPython Widget...')
+		#read arguments
+		self.I = args.get('I',self.I)
+		self.showSplash();self.updateSplash(10,'Importing iPython Widgets...')
+		from iPythonEmbed import QIPythonWidget;self.updateSplash(10,'Creating Dock Widget...')
+		#-------create an area for it to sit------
+		dock = QtGui.QDockWidget()
+		dock.setFeatures(QtGui.QDockWidget.DockWidgetMovable|QtGui.QDockWidget.DockWidgetFloatable)#|QDockWidget.DockWidgetVerticalTitleBar)
+		dock.setWindowTitle("Interactive Python Console")
+		fr = QtGui.QFrame();self.updateSplash(10)
+		dock.setWidget(fr)
+		self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock)
+		fr.setFrameShape(QtGui.QFrame.StyledPanel)
+		fr.setFrameShadow(QtGui.QFrame.Raised);self.updateSplash(10,'Embedding IPython Widget...')
 
-			#--------instantiate the iPython class-------
-			self.ipyConsole = QIPythonWidget(customBanner="An interactive Python Console!\n");self.updateSplash(10)
-			layout = QtGui.QVBoxLayout(fr)
-			layout.setMargin(0)
-			layout.addWidget(self.ipyConsole);self.updateSplash(10,'Preparing default command dictionary...')        
-			cmdDict = {"delayedTask":self.delayedTask,"loopTask":self.loopTask,"addWidget":self.addWidget,"setCommand":self.setCommand,"Widgets":Widgets}
-			#if self.graphContainer1_enabled:cmdDict["graph"]=self.graph
-			if self.I :
-				cmdDict["I"]=self.I
-				self.ipyConsole.printText("Access hardware using the Instance 'I'.  e.g.  I.get_average_voltage('CH1')")
-			self.ipyConsole.pushVariables(cmdDict);self.updateSplash(10,'Winding up...')
-			self.console_enabled=True
-			self.splash.finish(dock);self.updateSplash(10)
-			dock.widget().setMaximumSize(QtCore.QSize(self.width(), self.height()/3))
-			dock.widget().setMinimumSize(QtCore.QSize(self.width(), self.height()/3))
-			print dock.width(),dock.height()
-			def dockResize():
-				dock.widget().setMaximumSize(65535,65535)
-				dock.widget().setMinimumSize(60,60)
-			self.delayedTask(0,dockResize)
-			return self.ipyConsole
+		#--------instantiate the iPython class-------
+		self.ipyConsole = QIPythonWidget(customBanner="An interactive Python Console!\n");self.updateSplash(10)
+		layout = QtGui.QVBoxLayout(fr)
+		layout.setMargin(0)
+		layout.addWidget(self.ipyConsole);self.updateSplash(10,'Preparing default command dictionary...')        
+		cmdDict = {"delayedTask":self.delayedTask,"loopTask":self.loopTask,"addWidget":self.addWidget,"setCommand":self.setCommand,"Widgets":Widgets}
+		#if self.graphContainer1_enabled:cmdDict["graph"]=self.graph
+		if self.I :
+			cmdDict["I"]=self.I
+			self.ipyConsole.printText("Access hardware using the Instance 'I'.  e.g.  I.get_average_voltage('CH1')")
+		self.ipyConsole.pushVariables(cmdDict);self.updateSplash(10,'Winding up...')
+		self.console_enabled=True
+		self.splash.finish(dock);self.updateSplash(10)
+		dock.widget().setMaximumSize(QtCore.QSize(self.width(), self.height()/3))
+		dock.widget().setMinimumSize(QtCore.QSize(self.width(), self.height()/3))
+		print dock.width(),dock.height()
+		def dockResize():
+			dock.widget().setMaximumSize(65535,65535)
+			dock.widget().setMinimumSize(60,60)
+		self.delayedTask(0,dockResize)
+		return self.ipyConsole
 
-			
-			
+ 	def showHelp(self):
+ 		from PyQt4 import QtWebKit
+		dock = QtGui.QMainWindow()
+		self.helpView = QtWebKit.QWebView()
+		dock.setCentralWidget(self.helpView)
+		dock.setWindowTitle("Help window")
+		dock.show()
+		import pkg_resources
+		URL = pkg_resources.resource_filename(__name__, os.path.join('helpfiles',self.help_url))
+		self.helpView.setUrl(QtCore.QUrl(URL))			
+		self.helpWindow = dock
+
+ 	def showFullHelp(self):
+ 		from PyQt4 import QtWebKit
+		dock = QtGui.QMainWindow()
+		self.helpView = QtWebKit.QWebView()
+		dock.setCentralWidget(self.helpView)
+		dock.setWindowTitle("Help window")
+		dock.show()
+		import pkg_resources
+		URL = pkg_resources.resource_filename(__name__, os.path.join('helpfiles','interface.html'))
+		self.helpView.setUrl(QtCore.QUrl(URL))			
+		self.fullHelpWindow = dock
+
+
+	def setHelpFile(self,filename):
+		self.help_url=filename
+		
 	def new3dSurface(self,plot,**args):
 			import scipy.ndimage as ndi
 			surface3d = self.gl.GLSurfacePlotItem(z=np.array([[0.1,0.1],[0.1,0.1]]), **args)
@@ -504,7 +531,6 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
 			buttonCallback = functools.partial(slot,*args)
 			QObject.connect(widget, SIGNAL(signal), buttonCallback)
 
- 
  	'''
 	class WorkThread(QtCore.QThread):
 		punched = QtCore.pyqtSignal()		 

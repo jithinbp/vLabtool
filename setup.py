@@ -8,8 +8,6 @@ from distutils.util import execute
 from distutils.cmd import Command
 from subprocess import call
 
-
-
 def udev_reload_rules():
 	call(["udevadm", "control", "--reload-rules"])
 
@@ -53,14 +51,14 @@ for directory in directories:
 print data_files
 
 setup(name='vLabtool',
-	version='0.0.2',
+	version='1.0',
 	description='Package to deal with vLabtool',
 	author='Jithin B.P.',
 	author_email='jithinbp@gmail.com',
-	url='https://www.jithinbp.in/',
+	url='https://hackaday.io/project/6490',
 	install_requires = ['numpy>=1.8.1','pyqtgraph>=0.9.10'],
 	packages=find_packages(),#['Labtools', 'Labtools.widgets'],
 	scripts=["vLabtool/bin/"+a for a in os.listdir("vLabtool/bin/")],
-	package_data={'': ['*.css','*.png','*.html','*.css','*.js','*.png','*.jpg','*.jpeg','*.htm']},
+	package_data={'': ['*.css','*.png','*.html','*.css','*.js','*.png','*.jpg','*.jpeg','*.htm','proto.rules']},
 	cmdclass={'install': CustomInstall},
 	)

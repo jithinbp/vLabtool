@@ -1,4 +1,4 @@
-customui_rc Module
+customui_rc module
 ==================
 
 .. automodule:: customui_rc

@@ -17,8 +17,8 @@ cp ../customui_rc.py .
 cd Apps
 rm -r *
 cp -R ../../bin/* .
-touch __init__
 for file in * ; do mv "$file" "${file}.py" ; done
+cp ../__appinit__.py ./__init__.py
 cd ..
 
 rm -rf docs
@@ -27,6 +27,7 @@ cp conf.py docs/conf.py
 cp custom.css docs/_static/custom.css
 cp index.rst docs/index.rst
 cp Apps.rst docs/Apps.rst
+
 cd docs
 
 rm achan.rst

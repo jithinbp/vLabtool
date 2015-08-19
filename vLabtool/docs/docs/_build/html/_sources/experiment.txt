@@ -1,4 +1,4 @@
-experiment Module
+experiment module
 =================
 
 .. automodule:: experiment

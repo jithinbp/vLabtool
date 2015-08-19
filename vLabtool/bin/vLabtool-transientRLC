@@ -46,6 +46,7 @@ from vLabtool.templates.template_transient import Ui_Form
 import numpy as np
 from PyQt4 import QtGui,QtCore
 import pyqtgraph as pg
+
 class Handler(QtGui.QFrame,Ui_Form):
 	def __init__(self):
 		super(Handler, self).__init__()
@@ -120,6 +121,7 @@ class Handler(QtGui.QFrame,Ui_Form):
 
 if __name__ == "__main__":
 	Exp=Experiment(parent=None,showresult=False)
+	Exp.setHelpUrl('https://en.wikipedia.org/wiki/LC_circuit')
 	handler = Handler()
 	handler.I.set_gain('CH1',1)	#CHANGE GAIN CHANNEL TO 2 when used with PROTO-4
 	Exp.addHandler(handler)

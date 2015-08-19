@@ -1,5 +1,6 @@
 # Set the QT API to PyQt4
 import os
+import pkg_resources
 os.environ['QT_API'] = 'pyqt'
 import sip
 sip.setapi("QString", 2)
@@ -194,7 +195,7 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
 			self.axisItems=[]
 			self.total_plot_areas=0
 			self.widgetBay = False
-			self.help_url = 'interface.html'
+			self.help_url = pkg_resources.resource_filename(__name__, os.path.join('helpfiles','interface.html'))
 			#self.additional_handle = QSplitterHandle(Qt.Horizontal,self.graph_splitter)
 			#self.graph_splitter.addWidget(self.additional_handle)
 			if(args.get('showresult',True)):
@@ -417,9 +418,7 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
 		dock.setCentralWidget(self.helpView)
 		dock.setWindowTitle("Help window")
 		dock.show()
-		import pkg_resources
-		URL = pkg_resources.resource_filename(__name__, os.path.join('helpfiles',self.help_url))
-		self.helpView.setUrl(QtCore.QUrl(URL))			
+		self.helpView.setUrl(QtCore.QUrl(self.help_url))			
 		self.helpWindow = dock
 
  	def showFullHelp(self):
@@ -429,14 +428,16 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
 		dock.setCentralWidget(self.helpView)
 		dock.setWindowTitle("Help window")
 		dock.show()
-		import pkg_resources
 		URL = pkg_resources.resource_filename(__name__, os.path.join('helpfiles','interface.html'))
 		self.helpView.setUrl(QtCore.QUrl(URL))			
 		self.fullHelpWindow = dock
 
 
-	def setHelpFile(self,filename):
-		self.help_url=filename
+	def setHelpUrl(self,url):
+		if 'http' in url:
+			self.help_url = url
+		else:
+			self.help_url = pkg_resources.resource_filename(__name__, os.path.join('helpfiles',url))
 		
 	def new3dSurface(self,plot,**args):
 			import scipy.ndimage as ndi

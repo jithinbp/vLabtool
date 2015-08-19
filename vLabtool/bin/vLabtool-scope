@@ -1,4 +1,8 @@
 #!/usr/bin/python
+'''
+oscilloscope for the vLabtool.
+Also includes control widgets, and a logic analyzer
+'''
 
 from argparse import ArgumentParser
 
@@ -34,7 +38,6 @@ start_time = time.time()
 fps = None
 dacval=0
 from vLabtool.commands_proto import *
-
 
 
 

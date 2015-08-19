@@ -1,4 +1,4 @@
-NRF_NODE Module
+NRF_NODE module
 ===============
 
 .. automodule:: NRF_NODE

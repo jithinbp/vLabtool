@@ -1,3 +1,13 @@
+'''
+
+Help data
+
+sadsad
+as
+s
+s
+
+'''
 #!/usr/bin/python
 
 from argparse import ArgumentParser
@@ -37,7 +47,6 @@ from vLabtool.commands_proto import *
 
 
 
-
 class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 	def __init__(self, parent=None):
 		super(MyMainWindow, self).__init__(parent)
@@ -45,7 +54,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 		if not args.DeviceNumber: args.DeviceNumber=1
 		dv=int(args.DeviceNumber)
 		self.I = interface.Interface(devnum=dv)
-		self.setWindowTitle('LabToolSuite : '+self.I.H.version_string)
+		self.setWindowTitle('vLabtool : '+self.I.H.version_string)
 		
 		self.dacval=0
 
@@ -90,7 +99,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 		self.plot.setLabel('bottom', 'Time -->>', units='S')
 		self.plot.addLegend(offset=(-10,30))
 
-		self.trace_colors=[(255,20,20),(255,255,0),(20,155,20),(10,255,255)]
+		self.trace_colors=[(0,255,20),(255,255,0),(20,155,20),(10,255,255)]
 		self.plot2 = pg.ViewBox()
 		self.ax2 = pg.AxisItem('right')
 		self.plot.plotItem.layout.addItem(self.ax2, 2, 3)

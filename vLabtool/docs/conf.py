@@ -25,8 +25,8 @@ import sys, os
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 
 
+sys.path.insert(0,os.path.abspath('../Apps/'))
 sys.path.insert(0, os.path.abspath('../'))
-sys.path.insert(0, os.path.abspath('../Apps/'))
 autodoc_member_order = 'bysource'
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode','sphinx.ext.todo','sphinx.ext.autosummary']
 [extensions]
@@ -53,7 +53,7 @@ copyright = u'2015, Jithin B.'
 # built documents.
 #
 # The short X.Y version.
-version = ''
+version = '1.0'
 # The full version, including alpha/beta/rc tags.
 release = ''
 
@@ -96,8 +96,12 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
-
+html_theme = "default"
+html_theme_options = {
+    "rightsidebar": "true",
+    "relbarbgcolor": "black",
+    "collapsiblesidebar":True
+}
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
@@ -250,7 +254,7 @@ texinfo_documents = [
 # -- Options for Epub output ---------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'Lab ToolSuite'
+epub_title = u'vLabtool'
 epub_author = u'Jithin B.'
 epub_publisher = u'Jithin B.'
 epub_copyright = u'2015, Jithin B.'
@@ -289,6 +293,7 @@ epub_copyright = u'2015, Jithin B.'
 # Allow duplicate toc entries.
 #epub_tocdup = True
 
+
 html_style = 'custom.css'
 
 def skips(app, what, name, obj, skip, options):
@@ -298,4 +303,8 @@ def skips(app, what, name, obj, skip, options):
 
 def setup(app):
 	app.connect('autodoc-skip-member', skips)
+
+
+
+
 

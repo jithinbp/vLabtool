@@ -1,4 +1,4 @@
-NRF24L01_class Module
+NRF24L01_class module
 =====================
 
 .. automodule:: NRF24L01_class
