@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'exp5.ui'
 #
-# Created: Tue Aug 18 22:35:12 2015
+# Created: Thu Aug 20 16:22:36 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -176,6 +176,8 @@ class Ui_MainWindow(object):
         self.actionShow_help_window.setObjectName(_fromUtf8("actionShow_help_window"))
         self.actionProgrammer_s_manual = QtGui.QAction(MainWindow)
         self.actionProgrammer_s_manual.setObjectName(_fromUtf8("actionProgrammer_s_manual"))
+        self.actionImage_map_testing = QtGui.QAction(MainWindow)
+        self.actionImage_map_testing.setObjectName(_fromUtf8("actionImage_map_testing"))
         self.menuVoltmeters_2.addAction(self.actionCH1meter)
         self.menuVoltmeters_2.addAction(self.actionCH2meter)
         self.menuVoltmeters_2.addAction(self.actionCH3meter)
@@ -195,6 +197,7 @@ class Ui_MainWindow(object):
         self.menuConsole.addAction(self.actionInsert_Console)
         self.menuHelp.addAction(self.actionShow_help_window)
         self.menuHelp.addAction(self.actionProgrammer_s_manual)
+        self.menuHelp.addAction(self.actionImage_map_testing)
         self.menuBar.addAction(self.menuVoltmeters_2.menuAction())
         self.menuBar.addAction(self.menuAmplifiers_2.menuAction())
         self.menuBar.addAction(self.menuWaveform_Generators_2.menuAction())
@@ -223,6 +226,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionPCS, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.widget_pcs)
         QtCore.QObject.connect(self.actionShow_help_window, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.showHelp)
         QtCore.QObject.connect(self.actionProgrammer_s_manual, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.showFullHelp)
+        QtCore.QObject.connect(self.actionImage_map_testing, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.showImageMap)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -255,4 +259,5 @@ class Ui_MainWindow(object):
         self.actionPCS.setText(_translate("MainWindow", "PCS", None))
         self.actionShow_help_window.setText(_translate("MainWindow", "show help window", None))
         self.actionProgrammer_s_manual.setText(_translate("MainWindow", "full programmer\'s manual", None))
+        self.actionImage_map_testing.setText(_translate("MainWindow", "image map (testing)", None))
 

@@ -432,6 +432,17 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
 		self.helpView.setUrl(QtCore.QUrl(URL))			
 		self.fullHelpWindow = dock
 
+ 	def showImageMap(self):
+ 		from PyQt4 import QtWebKit
+		dock = QtGui.QMainWindow()
+		self.helpView = QtWebKit.QWebView()
+		dock.setCentralWidget(self.helpView)
+		dock.setWindowTitle("Help window")
+		dock.show()
+		URL = pkg_resources.resource_filename(__name__, os.path.join('helpfiles','imagemap.html'))
+		self.helpView.setUrl(QtCore.QUrl(URL))			
+		self.imageMapHelp = dock
+
 
 	def setHelpUrl(self,url):
 		if 'http' in url:
