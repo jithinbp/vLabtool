@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'scope.ui'
 #
-# Created: Tue Aug 18 23:38:07 2015
+# Created: Fri Aug 21 11:16:53 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -748,6 +748,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.message_label.sizePolicy().hasHeightForWidth())
         self.message_label.setSizePolicy(sizePolicy)
         self.message_label.setBaseSize(QtCore.QSize(0, 17))
+        self.message_label.setStyleSheet(_fromUtf8("color: rgb(255, 255, 255);"))
         self.message_label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.message_label.setWordWrap(True)
         self.message_label.setObjectName(_fromUtf8("message_label"))

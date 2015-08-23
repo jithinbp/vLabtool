@@ -2012,6 +2012,9 @@ border-color: rgb(29, 122, 162);
              <height>17</height>
             </size>
            </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(255, 255, 255);</string>
+           </property>
            <property name="text">
             <string>Msg:</string>
            </property>
