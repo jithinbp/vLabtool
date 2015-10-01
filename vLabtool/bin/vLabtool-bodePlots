@@ -78,7 +78,7 @@ class Handler(QtGui.QFrame,Ui_Form):
 		time.sleep(0.1)
 
 		tg=int(1e6/frq/1000)+1
-		self.I.capture_traces(2,1800,tg,trigger=False)
+		self.I.capture_traces(2,1800,tg,trigger=True)
 		self.loop=Exp.delayedTask(3200*tg*1e-3+50,self.plotData,frq)
 		
 		self.frq+=self.STEPFRQ
@@ -96,7 +96,7 @@ class Handler(QtGui.QFrame,Ui_Form):
 		self.curve2.setData(x,y)
 		a2,f2,p2,o2,chisq2 = self.CC.fitData(x,y,frequency=f1)
 		
-		if a2 and a1:
+		if (a2 and a1) and (abs(f2-frq)<10):
 			self.msg.setText("Set F:%.1f\tFitted F:%.1f"%(frq,f1))
 			self.freqs.append(f1)
 			self.amps.append(a2/a1)

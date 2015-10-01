@@ -47,7 +47,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 		self.setupUi(self)
 		if not args.DeviceNumber: args.DeviceNumber=1
 		dv=int(args.DeviceNumber)
-		self.I = interface.Interface(devnum=dv)
+		self.I = interface.Interface()
 		self.setWindowTitle('vLabtool : '+self.I.H.version_string)
 		
 		self.dacval=0
@@ -60,7 +60,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 
 		#cross hair
 		self.vLine = pg.InfiniteLine(angle=90, movable=True)
-		self.vLine.setPen(color=(135,44,64,150), width=3)
+		#self.vLine.setPen(color=(135,44,64,150), width=3)
 		self.plot.addItem(self.vLine, ignoreBounds=False)
 		#self.proxy = pg.SignalProxy(self.plot.scene().sigMouseMoved, rateLimit=60, slot=self.mouseMoved)
 		
@@ -185,7 +185,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 		self.PVS3_LABEL.setText('%.3f V'%(val))
 
 	def setPCS(self,val):
-		val=self.I.DAC.__setRawVoltage__(0,val)
+		val=3.3-self.I.DAC.__setRawVoltage__(0,val)
 		self.PCS_LABEL.setText('%.3f mA'%(val))
 
 	def setSINE1(self,val):
@@ -682,6 +682,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 
 
 	def __del__(self):
+		self.I.H.fd.close()
 		print 'bye'
         		
 if __name__ == "__main__":

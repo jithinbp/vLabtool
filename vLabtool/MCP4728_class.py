@@ -22,13 +22,12 @@ class MCP4728:
 		self.I2C = I2C_class.I2C(self.H)
 		self.SWITCHEDOFF=[0,0,0,0]
 		self.VREFS=[0,0,0,0]  #0=Vdd,1=Internal reference
-		self.VRANGES=[[ -3.3e-3,0],[0.,3.3],[-3.3,3.3],[-5.,5.]]
+		self.VRANGES=[[ 3.3e-3,0],[0.,3.3],[-3.3,3.3],[-5.,5.]]
 		self.VtoCode=[]
 		for a in self.VRANGES:
 			slope = (a[1]-a[0])
 			intercept = a[0]
 			self.VtoCode.append(np.poly1d([4095./slope,-4095.*intercept/slope ]))
-		print self.VtoCode
 
 	def setVoltage(self,chan,v):
 		chanMaps={'PCS':0,'PVS3':0,'PVS2':2,'PVS1':3}
