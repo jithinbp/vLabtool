@@ -6,7 +6,7 @@ Characterise PNP, NPN transistors using the programmable current source and volt
 
 '''
 
-from __future__ import print_statement
+from __future__ import print_function
 from vLabtool import interface
 from vLabtool.experiment import *
 from vLabtool.templates.template_trans import Ui_Form

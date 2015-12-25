@@ -1,4 +1,4 @@
-from __future__ import print_statement
+from __future__ import print_function
 from numpy import int16
 import time
 

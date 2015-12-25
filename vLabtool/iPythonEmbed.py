@@ -1,4 +1,4 @@
-from __future__ import print_statement
+from __future__ import print_function
 from IPython.qt.console.rich_ipython_widget import RichIPythonWidget
 class QIPythonWidget(RichIPythonWidget):
 	def __init__(self,customBanner=None,*args,**kwargs):

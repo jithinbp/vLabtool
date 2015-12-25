@@ -4,7 +4,7 @@ oscilloscope for the vLabtool.
 Also includes control widgets, and a logic analyzer
 '''
 
-from __future__ import print_statement
+from __future__ import print_function
 from argparse import ArgumentParser
 
 parser = ArgumentParser()

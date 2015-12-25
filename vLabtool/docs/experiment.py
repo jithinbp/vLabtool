@@ -1,4 +1,4 @@
-from __future__ import print_statement
+from __future__ import print_function
 # Set the QT API to PyQt4
 import os
 import pkg_resources

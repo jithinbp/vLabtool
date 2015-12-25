@@ -1,4 +1,4 @@
-from __future__ import print_statement
+from __future__ import print_function
 import numpy as np
 TEN_BIT=10
 TWELVE_BIT=12

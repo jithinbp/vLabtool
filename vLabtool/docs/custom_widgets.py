@@ -3,7 +3,7 @@ These widgets will be used by the Experiment framework
 
 """
 
-from __future__ import print_statement
+from __future__ import print_function
 import sip,os
 
 os.environ['QT_API'] = 'pyqt'

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 
-from __future__ import print_statement
+from __future__ import print_function
 import vLabtool.interface as interface
 from vLabtool.experiment import *
 from vLabtool.templates.template_bandpass import Ui_Form

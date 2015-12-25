@@ -38,7 +38,7 @@
 
 
 """
-from __future__ import print_statement
+from __future__ import print_function
 
 from vLabtool.experiment import Experiment,ConvenienceClass
 import vLabtool.interface as interface

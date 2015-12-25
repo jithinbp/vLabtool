@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from __future__ import print_statement
+from __future__ import print_function
 from vLabtool.experiment import *
 if __name__ == "__main__":
 	Exp=Experiment(parent=None,showresult=False)
