@@ -1,4 +1,6 @@
 #!/usr/bin/python
+
+from __future__ import print_statement
 from vLabtool.experiment import *
 if __name__ == "__main__":
 	Exp=Experiment(parent=None,showresult=False)
@@ -51,7 +53,7 @@ class Handler(QtGui.QFrame,ConvenienceClass,Ui_Form):
 		try:
 			self.arrow.setPos(self.num,self.Y[self.num])
 		except:
-			print self.num
+			print (self.num)
 		self.num+=1
 		if self.num>=self.totalpoints:
 			self.num=0
@@ -71,10 +73,10 @@ class Handler(QtGui.QFrame,ConvenienceClass,Ui_Form):
 			int_args=[]	#in case the function has zero arguments, args[-1] will fail.
 		method = getattr(self.I,fn_name)
 		if method == None :
-			print 'no such command :',fn_name
+			print ('no such command :',fn_name)
 			return None
 		else:
-			print method,int_args
+			print (method,int_args)
 			return method,int_args
 
 if __name__ == "__main__":

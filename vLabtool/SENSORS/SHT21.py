@@ -1,3 +1,4 @@
+from __future__ import print_statement
 from numpy import int16
 import time
 
@@ -14,10 +15,10 @@ class SHT21():
 		self.name = 'Humidity/Temperature'
 		'''
 		try:
-			print 'switching baud to 400k'
+			print ('switching baud to 400k')
 			self.I2C.configI2C(400e3)
 		except:
-			print 'FAILED TO CHANGE BAUD RATE'
+			print ('FAILED TO CHANGE BAUD RATE')
 		'''
 		self.params={'selectParameter':['temperature','humidity']}
 		self.init('')
@@ -75,7 +76,7 @@ class SHT21():
 		if vals:
 			if self._calculate_checksum(vals,2)!=vals[2]:
 				return False
-				print vals
+				print (vals)
 		if self.selected==self.TEMP_ADDRESS:return self.rawToTemp(vals)		
 		elif self.selected==self.HUMIDITY_ADDRESS:return self.rawToRH(vals)		
 		

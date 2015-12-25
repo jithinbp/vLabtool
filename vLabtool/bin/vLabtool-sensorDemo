@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from __future__ import print_statement
 from vLabtool.experiment import *
 if __name__ == "__main__":
 	Exp=Experiment(parent=None,showresult=False)
@@ -19,7 +20,7 @@ class Handler(QtGui.QFrame,ConvenienceClass,Ui_Form):
 		self.setupUi(self)
 		self.I = interface.Interface(2.0)
 
-		print self.I.readLog()	
+		print (self.I.readLog()	)
 		self.plot = self.Exp.add2DPlot()
 		self.plot.setLabel('bottom', 'Datapoints -->>')
 		self.plot.setYRange(-35000,35000)
@@ -184,7 +185,7 @@ class Handler(QtGui.QFrame,ConvenienceClass,Ui_Form):
 			self.refreshTimer.stop()
 
 	def __exit__(self):
-		print 'CYA'
+		print ('CYA')
 		
 if __name__ == "__main__":
 	handler = Handler(Exp)

@@ -4,6 +4,8 @@ Connect all inputs to PVS1x2 before starting
 Author:Jithin
 
 '''
+from __future__ import print_function
+
 import numpy as np
 import serial,time,string,sys
 import struct
@@ -68,7 +70,7 @@ for val in channel_names:
 	addEntry(val,fits[val],True)
 
 ft=np.poly1d(fits['CH1'][0])
-print 'testing',ft(0),ft(1023)
+print ('testing',ft(0),ft(1023))
 
 f.write('}\n')
 
@@ -79,14 +81,14 @@ CH2str = struct.pack('3f',*fits['CH2'])
 CH3str = struct.pack('3f',*fits['CH3'])
 CH4str = struct.pack('3f',*fits['CH4'])
 
-print CH1str
-print CH2str
-print CH3str
-print CH4str
+print (CH1str)
+print (CH2str)
+print (CH3str)
+print (CH4str)
 
-print struct.unpack('3f',CH1str)
-print struct.unpack('3f',CH2str)
-print struct.unpack('3f',CH3str)
-print struct.unpack('3f',CH4str)
+print (struct.unpack('3f',CH1str))
+print (struct.unpack('3f',CH2str))
+print (struct.unpack('3f',CH3str))
+print (struct.unpack('3f',CH4str))
 '''
 

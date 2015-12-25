@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from __future__ import print_statement
 import os
 os.environ['QT_API'] = 'pyqt'
 import sip
@@ -56,7 +57,7 @@ class Interface(object):
 
 	>>> from vLabtool import interface
 	>>> I = interface.Interface(2.0)
-	>>> print I
+	>>> print (I)
 	<interface.Interface instance at 0xb6c0cac>
 
 
@@ -105,20 +106,20 @@ class Interface(object):
 			polynomials = self.read_bulk_flash(self.ADC_POLYNOMIALS_LOCATION,2048)
 			polyDict={}
 			if polynomials[:3]=='ADC':
-				print 'ADC calibration found...'
+				print ('ADC calibration found...')
 				import struct
 				adc_shifts = self.read_bulk_flash(self.ADC_SHIFTS_LOCATION1,2048)+self.read_bulk_flash(self.ADC_SHIFTS_LOCATION2,2048)
 				adc_shifts = [ord(a) for a in adc_shifts]
-				print 'ADC INL correction table loaded.'
+				print ('ADC INL correction table loaded.')
 				polynomials=polynomials.split('!!!!')[0]
 				for a in polynomials.split('>|')[1:]:
 					S= a.split('|<')
-					print '>>>>>>',S[0]
+					print ('>>>>>>',S[0])
 					cals=S[1]
 					polyDict[S[0]]=[]
 					for b in range(len(cals)/16):
 						poly=struct.unpack('4f',cals[b*16:(b+1)*16])
-						print b,poly
+						print (b,poly)
 						polyDict[S[0]].append(poly)
 
 				for a in self.analogInputSources:
@@ -134,7 +135,7 @@ class Interface(object):
 									self.analogInputSources[b].calibrationReady=True
 									self.analogInputSources[b].regenerateCalibration()
 				
-				print polynomials.split('>|')[0]
+				print (polynomials.split('>|')[0])
 				
 
 		
@@ -180,7 +181,7 @@ class Interface(object):
 			>>> I=Interface()
 			>>> I.SPI.start('CS1')
 			>>> I.SPI.send16(0xAAFF)
-			>>> print I.SPI.send16(0xFFFF)
+			>>> print (I.SPI.send16(0xFFFF))
 			some number
 		
 		.. seealso:: :py:meth:`~SPI_class.SPI` for complete documentation
@@ -203,12 +204,12 @@ class Interface(object):
 				>>> I.NRF.start_token_manager()  #Start listening to any nodes that may turn on 
 				>>> while 1:   #Wait for at least one node to register itself
 				>>> 	lst = I.NRF.get_nodelist()
-				>>> 	print lst
+				>>> 	print (lst)
 				>>> 	time.sleep(0.5)
 				>>> 	if(len(lst)>0):break
 				>>> I.NRF.stop_token_manager()	# Registrations closed!
 				>>> LINK = I.newRadioLink(address=lst.keys()[0])  #lst = dictionary with node addresses as keys, and I2C sensors as values
-				>>> print LINK.I2C_scan()						  #vLabtool automatically transmits stuff to LINK's address, and retrieves sensor info.
+				>>> print (LINK.I2C_scan()						  #vLabtool automatically transmits stuff to LINK's address, and retrieves sensor info.)
 		
 			.. raw:: html
 		
@@ -220,7 +221,7 @@ class Interface(object):
 		self.DDS_MAX_FREQ = 0xFFFFFFFL-1	#28 bit resolution
 		self.DDS_CLOCK = 8e6			# MHz clock
 		self.map_reference_clock(4,'wavegen')
-		#print self.DDS_CLOCK
+		#print (self.DDS_CLOCK)
 		self.__selectSensorChannel__(0)
 		for a in ['CH1','CH2']: self.set_gain(a,0)
 		self.SOCKET_CAPACITANCE = 42e-12
@@ -229,7 +230,7 @@ class Interface(object):
 
 	
 	def __del__(self):
-		print 'closing port'
+		print ('closing port')
 		try:
 			self.fd.close()
 		except:
@@ -561,10 +562,10 @@ class Interface(object):
 		:return: conversion done(bool) ,samples acquired (number)
 
 		>>> I.start_capture(1,3200,2)
-		>>> print I.oscilloscope_progress()
+		>>> print (I.oscilloscope_progress())
 		(0,46)
 		>>> time.sleep(3200*2e-6)
-		>>> print I.oscilloscope_progress()
+		>>> print (I.oscilloscope_progress())
 		(1,3200)
 		
 		.. seealso::
@@ -581,7 +582,7 @@ class Interface(object):
 			samples = self.H.__getInt__()
 			self.H.__get_ack__()
 		except:
-			print 'disconnected!!'
+			print ('disconnected!!')
 			#sys.exit(1)
 		return conversion_done,samples
 
@@ -599,7 +600,7 @@ class Interface(object):
 		"""
 		samples = self.achans[channel_number-1].length
 		if(channel_number>self.channels_in_buffer):
-			print 'Channel unavailable'
+			print ('Channel unavailable')
 			return False
 		data=''
 		for i in range(int(samples/self.data_splitting)):
@@ -640,7 +641,7 @@ class Interface(object):
 		offset=0 
 		samples = self.achans[channel_number-1].length
 		if(channel_number>self.channels_in_buffer):
-			print 'Channel unavailable'
+			print ('Channel unavailable')
 			return False
 		self.H.__sendByte__(ADC)
 		self.H.__sendByte__(GET_CAPTURE_CHANNEL)
@@ -723,7 +724,7 @@ class Interface(object):
 
 		"""
 		if self.analogInputSources[channel].gainPGA==None:
-			print 'No amplifier exists on this channel :',channel
+			print ('No amplifier exists on this channel :',channel)
 			return
 		
 		self.analogInputSources[channel].setGain(self.gain_values[gain])
@@ -764,14 +765,14 @@ class Interface(object):
 				if source.offsetCode!=self.SENSORMID:
 					self.DAC.__setRawVoltage__(1,source.offsetCode)
 					self.SENSORMID = source.offsetCode
-					#print 'reset details',self.sensor_multiplex_channel,self.SENSORMID
+					#print ('reset details',self.sensor_multiplex_channel,self.SENSORMID)
 
 				if self.sensor_multiplex_channel != source.multiplexSelection:
 					self.sensor_multiplex_channel = source.multiplexSelection
 					self.__selectSensorChannel__(source.multiplexSelection)
-					#print 'reset details',self.sensor_multiplex_channel,self.SENSORMID
+					#print ('reset details',self.sensor_multiplex_channel,self.SENSORMID)
 		else:
-			print 'not a valid channel name. selecting CH1'
+			print ('not a valid channel name. selecting CH1')
 			return self.__calcCHOSA__('CH1')
 
 		return source.CHOSA
@@ -799,7 +800,7 @@ class Interface(object):
 
 		Example:
 		
-		>>> print I.get_average_voltage('CH4')
+		>>> print (I.get_average_voltage('CH4'))
 		1.002
 		
 		"""
@@ -811,7 +812,7 @@ class Interface(object):
 		self.H.__getInt__() #2 leading Zeroes sent by UART. sleep or no sleep :p
 		V_sum = self.H.__getInt__()
 		#V = [self.H.__getInt__() for a in range(16)]
-		#print V
+		#print (V)
 		self.H.__get_ack__()
 		return  self.analogInputSources[channel_name].calPoly12(V_sum/16.)
 
@@ -857,7 +858,7 @@ class Interface(object):
 		if name in self.digital_channel_names:
 			return self.digital_channel_names.index(name)
 		else:
-			print ' invalid channel',name,' , selecting ID1 instead '
+			print (' invalid channel',name,' , selecting ID1 instead ')
 			return 0
 		
 	def get_high_freq(self,pin):
@@ -916,13 +917,13 @@ class Interface(object):
 			* connect SQR1 to ID1
 			
 			>>> I.set_sqr1(2000,500,1) # TODO: edit this function
-			>>> print I.get_freq('ID1')
+			>>> print (I.get_freq('ID1'))
 			4000.0
-			>>> print I.r2r_time('ID1')	#time between successive rising edges
+			>>> print (I.r2r_time('ID1')	#time between successive rising edges)
 			0.00025
-			>>> print I.f2f_time('ID1') #time between successive falling edges
+			>>> print (I.f2f_time('ID1') #time between successive falling edges)
 			0.00025
-			>>> print I.pulse_time('ID1') #may detect a low pulse, or a high pulse. Whichever comes first
+			>>> print (I.pulse_time('ID1') #may detect a low pulse, or a high pulse. Whichever comes first)
 			6.25e-05
 			>>> I.duty_cycle('ID1')		#returns wavelength, high time
 			(0.00025,6.25e-05)			
@@ -1040,7 +1041,7 @@ class Interface(object):
 			y = [x[1]-x[0],x[2]-x[0]]
 		else:		#falling edge
 			y = [x[2]-x[1],x[2]-x[0]]
-		print x,y,edge
+		print (x,y,edge)
 		if(tmt >= timeout_msb):return -1,-1
 		rtime = lambda t: t/64e6
 		params = rtime(y[1]),rtime(y[0])/rtime(y[1])
@@ -1104,7 +1105,7 @@ class Interface(object):
 		B=self.H.__getLong__()
 		tmt = self.H.__getInt__()
 		self.H.__get_ack__()
-		#print A,B
+		#print (A,B)
 		if(tmt >= timeout_msb or B==0):return -1
 		rtime = lambda t: t/64e6
 		return rtime(B-A+20)
@@ -1138,7 +1139,7 @@ class Interface(object):
 		self.H.__get_ack__()
 		if(tmt >= timeout_msb):return -1
 		rtime = lambda t: t/64e6
-		#print params[0]*1e6,params[1]*1e6
+		#print (params[0]*1e6,params[1]*1e6)
 		return rtime(x[1]-x[0])
 
 	def setup_comparator(self,level=7,digital_filter=3):
@@ -1157,7 +1158,7 @@ class Interface(object):
 		.. seealso:: timing_example_
 
 		"""
-		print (1./4)*(3.3) + (level/32.)*(3.3) 
+		print ((1./4)*(3.3) + (level/32.)*(3.3) )
 		self.H.__sendByte__(TIMING)
 		self.H.__sendByte__(CONFIGURE_COMPARATOR)
 		self.H.__sendByte__(level | (digital_filter<<4) )
@@ -1190,7 +1191,7 @@ class Interface(object):
 		"""
 		if trigger!=0:
 			if trigger not in ['rising','falling']:
-				print 'Error. invalid value for trigger:',trigger,'\nTry trigger="rising"'
+				print ('Error. invalid value for trigger:',trigger,'\nTry trigger="rising"')
 				return 0,[]
 			self.start_one_channel_LA(True,'ID1',edge=trigger,trigger_channels=['ID1'])
 		else:
@@ -1296,7 +1297,7 @@ class Interface(object):
 			if 'trigger_channel' in args:
 				trchan = self.__calcDChan__(args.get('trigger_channel','ID1'))
 				tredge = args.get('trigger_edge',0)
-				print 'trigger chan',trchan,' trigger edge ',tredge
+				print ('trigger chan',trchan,' trigger edge ',tredge)
 				if tredge!=-1:
 					self.H.__sendByte__((trchan<<4)|(tredge<<1)|1)
 				else:
@@ -1527,7 +1528,7 @@ class Interface(object):
 		prescale = 0
 		"""
 		if(maximum_time > 0.26):
-			#print 'too long for 4 channel. try 2/1 channels'
+			#print ('too long for 4 channel. try 2/1 channels')
 			prescale = 3
 		elif(maximum_time > 0.0655):
 			prescale = 3
@@ -1589,7 +1590,7 @@ class Interface(object):
 		if C<0: C=0
 		if D<0: D=0
 
-		#print [(s&1!=0),(s&2!=0),(s&4!=0),(s&8!=0)],[(s_err&1!=0),(s_err&2!=0),(s_err&4!=0),(s&8!=0)]
+		#print ([(s&1!=0),(s&2!=0),(s&4!=0),(s&8!=0)],[(s_err&1!=0),(s_err&2!=0),(s_err&4!=0),(s&8!=0)])
 		return A,B,C,D,[(s&1!=0),(s&2!=0),(s&4!=0),(s&8!=0)]
 
 		
@@ -1667,10 +1668,10 @@ class Interface(object):
 			if a.datatype=='int':
 				tmp = self.fetch_int_data_from_LA(data[a.channel_number],a.channel_number+1)
 				a.load_data(s,tmp)
-				#print a.channel_number,samples,tmp[:10]
+				#print (a.channel_number,samples,tmp[:10])
 			else:
 				tmp = self.fetch_long_data_from_LA(data[a.channel_number*2],a.channel_number+1)
-				#if len(tmp)>10: print tmp[0],np.diff(tmp[:10])
+				#if len(tmp)>10: print (tmp[0],np.diff(tmp[:10]))
 				a.load_data(s,tmp)
 		
 		offset=0
@@ -1687,7 +1688,7 @@ class Interface(object):
 		"""
 		gets the state of the digital inputs. returns dictionary with keys 'ID1','ID2','ID3','ID4'
 
-		>>> print get_states()
+		>>> print (get_states())
 		{'ID1': True, 'ID2': True, 'ID3': True, 'ID4': False}
 		
 		"""
@@ -1715,7 +1716,7 @@ class Interface(object):
 		|          |  * 'ID4' -> state of ID4                                        |
 		+----------+-----------------------------------------------------------------+
 
-		>>> print I.get_state(I.ID1)
+		>>> print (I.get_state(I.ID1))
 		False
 		
 		"""
@@ -1823,7 +1824,7 @@ class Interface(object):
 		self.H.__get_ack__()
 		Charge_Current = currents[current_range]*(100+trim)/100.0
 		C = Charge_Current*Charge_Time*1e-6/V - self.SOCKET_CAPACITANCE
-		print 'Current if C=470pF :',V*(470e-12+self.SOCKET_CAPACITANCE)/(Charge_Time*1e-6)
+		print ('Current if C=470pF :',V*(470e-12+self.SOCKET_CAPACITANCE)/(Charge_Time*1e-6))
 		return V,Charge_Current,Charge_Time,C
 
 
@@ -1934,7 +1935,7 @@ class Interface(object):
 		================	============================================================================================
 
 		"""
-		print 'Dumping ',len(bytearray),' bytes into flash'
+		print ('Dumping ',len(bytearray),' bytes into flash')
 		self.H.__sendByte__(FLASH)
 		self.H.__sendByte__(WRITE_BULK_FLASH) 	#indicate a flash write coming through
 		self.H.__sendInt__(len(bytearray)) 	#send the length
@@ -1970,7 +1971,7 @@ class Interface(object):
 		time.sleep(0.001)
 		self.H.__getByte__()	#junk byte '0' sent since UART was in IDLE mode and needs to recover.
 		#V = [self.H.__getInt__() for a in range(16)]
-		#print V
+		#print (V)
 		#v=sum(V)
 		v=self.H.__getInt__() #16*voltage across the current source
 		self.H.__get_ack__()
@@ -2154,7 +2155,7 @@ class Interface(object):
 		self.H.__sendByte__(B)
 		self.H.__sendByte__(R)
 		self.H.__sendByte__(G)
-		print B,R,G
+		print (B,R,G)
 		time.sleep(0.001)
 		self.H.__get_ack__()
 		return B,R,G	
@@ -2235,7 +2236,7 @@ class Interface(object):
 			self.H.fd.read(20000)
 			self.H.fd.flush()
 		else:
-			print 'not streaming'
+			print ('not streaming')
 		self.streaming=False
 
 	def sqr1(self,freq,duty_cycle,echo=False):
@@ -2256,11 +2257,11 @@ class Interface(object):
 			if wavelength<65525: break
 			prescaler+=1
 		if prescaler==4:
-			print 'out of range'
+			print ('out of range')
 			return
 		high_time = wavelength*duty_cycle/100.
-		print wavelength,high_time,prescaler
-		if echo:print wavelength,high_time,prescaler
+		print (wavelength,high_time,prescaler)
+		if echo:print (wavelength,high_time,prescaler)
 		self.H.__sendByte__(WAVEGEN)
 		self.H.__sendByte__(SET_SQR1)
 		self.H.__sendInt__(int(round(wavelength)))
@@ -2288,10 +2289,10 @@ class Interface(object):
 			if wavelength<65525: break
 			prescaler+=1
 		if prescaler==4:
-			print 'out of range'
+			print ('out of range')
 			return
 		high_time = wavelength*duty_cycle/100.
-		print wavelength,high_time,prescaler
+		print (wavelength,high_time,prescaler)
 		self.H.__sendByte__(WAVEGEN)
 		self.H.__sendByte__(SET_SQR2)
 		self.H.__sendInt__(int(round(wavelength)))
@@ -2344,7 +2345,7 @@ class Interface(object):
 		"""
 		wavelength = int(64e6/freq)
 		if wavelength>65535:
-			print 'frequency too low.'
+			print ('frequency too low.')
 			return
 		self.H.__sendByte__(WAVEGEN)
 		self.H.__sendByte__(SQR4)
@@ -2376,7 +2377,7 @@ class Interface(object):
 			A3 = int(p3*wavelength)
 			B3 = int((h3+p3)*wavelength)
 
-		print wavelength,A1,B1,A2,B2,A3,B3
+		print (wavelength,A1,B1,A2,B2,A3,B3)
 		self.H.__sendInt__(A1)
 		self.H.__sendInt__(B1)
 		self.H.__sendInt__(A2)
@@ -2407,7 +2408,7 @@ class Interface(object):
 		wavelength = int(64e6/freq)
 		params=0
 		if wavelength>0xFFFF00:
-			print 'frequency too low.'
+			print ('frequency too low.')
 			return
 		elif wavelength>0x3FFFC0:
 			wavelength = int(64e6/freq/256)
@@ -2431,8 +2432,8 @@ class Interface(object):
 		A3 = int(p3%1*wavelength)
 		B3 = int((h3+p3)%1*wavelength)
 
-		print p1,h1,p2,h2,p3,h3
-		print wavelength,int(wavelength*h0),A1,B1,A2,B2,A3,B3
+		print (p1,h1,p2,h2,p3,h3)
+		print (wavelength,int(wavelength*h0),A1,B1,A2,B2,A3,B3)
 		self.H.__sendInt__(A1)
 		self.H.__sendInt__(B1)
 		self.H.__sendInt__(A2)
@@ -2674,9 +2675,9 @@ class Interface(object):
 		self.H.__sendByte__(PASS_UART)
 		self.H.__sendByte__(1 if persist else 0)
 		self.H.__sendInt__(int( round(((64e6/baudrate)/4)-1) ))
-		print 'BRGVAL:',int( round(((64e6/baudrate)/4)-1) )
+		print ('BRGVAL:',int( round(((64e6/baudrate)/4)-1) ))
 		time.sleep(0.1)
-		print 'junk bytes read:',len(self.H.fd.read(100))
+		print ('junk bytes read:',len(self.H.fd.read(100)))
 
 
 
@@ -2707,7 +2708,7 @@ class Interface(object):
 		B=self.H.__getLong__()
 		tmt = self.H.__getInt__()
 		self.H.__get_ack__()
-		#print A,B
+		#print (A,B)
 		if(tmt >= timeout_msb or B==0):return 0
 		rtime = lambda t: t/64e6
 		return rtime(B-A+20)
@@ -2759,7 +2760,7 @@ class Interface(object):
 	def __del__(self):
 		self.H.fd.close()
 if __name__ == "__main__":
-	print """this is not an executable file
+	print ("""this is not an executable file
 	from vLabtool import interface
 	I=interface.Interface()
 	
@@ -2768,4 +2769,4 @@ if __name__ == "__main__":
 	eg.
 	
 	I.get_average_voltage('CH1')
-	"""
+	""")

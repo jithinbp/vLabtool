@@ -5,6 +5,8 @@ Characterise PNP, NPN transistors using the programmable current source and volt
 
 
 '''
+
+from __future__ import print_statement
 from vLabtool import interface
 from vLabtool.experiment import *
 from vLabtool.templates.template_trans import Ui_Form
@@ -90,7 +92,7 @@ class Handler(QFrame,ConvenienceClass,Ui_Form):
 	def saveData(self):
 		filename = self.filename_text.text()
 		if not len(self.curveData):
-			print 'No data yet'
+			print ('No data yet')
 			return
 		f=open(filename,'wt')
 		for a in self.curveData:
@@ -99,7 +101,7 @@ class Handler(QFrame,ConvenienceClass,Ui_Form):
 				f.write('%0.4e %0.4e\n'%(x[num],y[num]))
 			f.write('\n')
 		f.close()				
-		print 'saved to :',filename
+		print ('saved to :',filename)
 
 	def acquire(self,chan):
 		self.I.set_pvs1(self.Vval)

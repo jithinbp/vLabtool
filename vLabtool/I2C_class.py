@@ -1,3 +1,4 @@
+from __future__ import print_statement
 from commands_proto import *
 
 class I2C():
@@ -22,7 +23,7 @@ class I2C():
 		>>> x=int16((vals[0]<<8)|vals[1])	#conversion to signed datatype
 		>>> y=int16((vals[2]<<8)|vals[3])
 		>>> z=int16((vals[4]<<8)|vals[5])
-		>>> print x,y,z
+		>>> print (x,y,z)
 	
 	"""
 
@@ -64,7 +65,7 @@ class I2C():
 		BRGVAL=int( (1./freq-1./1e7)*64e6-1 )
 		if BRGVAL>511:
 			BRGVAL=511
-			if verbose:print 'Frequency too low. Setting to :',1/((BRGVAL+1.0)/64e6+1.0/1e7)
+			if verbose:print ('Frequency too low. Setting to :',1/((BRGVAL+1.0)/64e6+1.0/1e7))
 		self.H.__sendInt__(BRGVAL) 
 		self.H.__get_ack__()
 
@@ -226,7 +227,7 @@ class I2C():
 		try:
 			return [ord(a) for a in data]
 		except:
-			print 'Transaction failed'
+			print ('Transaction failed')
 			return False
 		
 	def writeBulk(self,device_address,bytestream):
@@ -243,13 +244,13 @@ class I2C():
 		addrs=[]
 		n=0
 		if verbose:
-			print 'Scanning addresses 0-127...'
-			print 'Address','\t','Possible Devices'
+			print ('Scanning addresses 0-127...')
+			print ('Address','\t','Possible Devices')
 		for a in range(0,128):
 			x = self.start(a,0)
 			if x&1 == 0:	#ACK received
 				addrs.append(a)
-				if verbose: print hex(a),'\t\t',self.SENSORS.get(a,'None')
+				if verbose: print (hex(a),'\t\t',self.SENSORS.get(a,'None'))
 				n+=1
 			self.stop()
 		return addrs

@@ -166,7 +166,7 @@ class Experiment(QMainWindow,template_exp_standalone.Ui_MainWindow):		#,interfac
 				self.ipyConsole.pushVariables({"I":self.I})
 				self.ipyConsole.printText("Access hardware using the Instance 'I'.  e.g.  I.get_average_voltage(0)")                           
 		except:
-			print 'Device Not Connected.'
+			print ('Device Not Connected.')
 
 
 	def new3dSurface(self,plot,**args):

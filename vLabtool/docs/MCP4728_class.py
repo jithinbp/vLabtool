@@ -1,3 +1,4 @@
+from __future__ import print_statement
 from commands_proto import *
 import I2C_class
 import numpy as np
@@ -28,7 +29,7 @@ class MCP4728:
 			slope = (a[1]-a[0])
 			intercept = a[0]
 			self.VtoCode.append(np.poly1d([4095./slope,-4095.*intercept/slope ]))
-		print self.VtoCode
+		print (self.VtoCode)
 
 	def setVoltage(self,chan,v):
 		chanMaps={'PCS':0,'PVS3':0,'PVS2':2,'PVS1':3}
@@ -47,15 +48,15 @@ class MCP4728:
 		self.H.__sendByte__(self.addr<<1)	#I2C address
 		self.H.__sendByte__(chan)		#DAC channel
 		self.H.__sendInt__((self.VREFS[chan] << 15) | (self.SWITCHEDOFF[chan] << 13) | (1 << 12) | v )
-		#print chan,hex((self.VREFS[chan] << 15) | (self.SWITCHEDOFF[chan] << 13) | (1 << 12) | v )
+		#print (chan,hex((self.VREFS[chan] << 15) | (self.SWITCHEDOFF[chan] << 13) | (1 << 12) | v ))
 		if(ADD_CALIBRATION):
 			val = self.H.__getInt__()
-			#print 'val, correction: ',v,val-v
-		else: pass#print v
+			#print ('val, correction: ',v,val-v)
+		else: pass#print (v)
 		self.H.__get_ack__()
 		if chan==0:chan=1   #pvs3=pcs=DAC channel 1
 		R=self.VRANGES[chan]
-		#print 'code',self.VtoCode[chan]((R[1]-R[0])*v/4095.+R[0])
+		#print ('code',self.VtoCode[chan]((R[1]-R[0])*v/4095.+R[0]))
 		return (R[1]-R[0])*v/4095.+R[0]
 
 	def __writeall__(self,v1,v2,v3,v4):
@@ -76,6 +77,6 @@ class MCP4728:
 		self.I2C.restart(self.addr,1)
 		vals=self.I2C.read(24)
 		self.I2C.stop()
-		print vals
+		print (vals)
 
 

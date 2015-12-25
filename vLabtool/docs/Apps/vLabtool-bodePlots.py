@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 
+from __future__ import print_statement
 import vLabtool.interface as interface
 from vLabtool.experiment import *
 from vLabtool.templates.template_bandpass import Ui_Form
@@ -106,9 +107,9 @@ class Handler(QtGui.QFrame,Ui_Form):
 			if dp<-360:dp+=360
 			self.dP.append(dp)
 		else:
-			print 'err!',
-		print '%d:\tF: %.2f,%.2f\tA: %.2f,%.2f\tP: %.1f,%.1f'%(frq,f1,f2,a1,a2,p1,p2)
-		#print chisq2[0]
+			print ('err!',)
+		print ('%d:\tF: %.2f,%.2f\tA: %.2f,%.2f\tP: %.1f,%.1f'%(frq,f1,f2,a1,a2,p1,p2))
+		#print (chisq2[0])
 		self.curveAmp.setData(self.freqs,self.amps)
 		self.curvePhase.setData(self.freqs,self.dP)
 		self.loop=Exp.delayedTask(10,self.newset)
@@ -125,7 +126,7 @@ class Handler(QtGui.QFrame,Ui_Form):
 		self.curveAmp.clear()
 		self.curvePhase.clear()
 		self.frq=self.STARTFRQ
-		print 'cleared data'
+		print ('cleared data')
 
 if __name__ == "__main__":
 	Exp=Experiment(parent=None,showresult=False)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_statement
 #from distutils.core import setup
 from setuptools import setup, find_packages
 from setuptools.command.install import install
@@ -48,7 +49,7 @@ for directory in directories:
 	files = [os.path.join(directory,a) for a in files]
 	data_files.append((directory,files))
 
-print data_files
+print (data_files)
 
 setup(name='vLabtool',
 	version='1.0',

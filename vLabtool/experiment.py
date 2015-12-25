@@ -1,4 +1,6 @@
 # Set the QT API to PyQt4
+from __future__ import print_function
+
 import os
 import pkg_resources
 os.environ['QT_API'] = 'pyqt'
@@ -35,12 +37,12 @@ class ConvenienceClass():
 
 	timers=[]
 	def __init__(self):
-		print 'initializing convenience class'
+		print ('initializing convenience class')
 		try:
 			import scipy.optimize as optimize
 			import scipy.fftpack as fftpack
 		except ImportError:
-			print 'imports failed for scipy.optimize,scipy.fftpack'
+			print ('imports failed for scipy.optimize,scipy.fftpack')
 			self.optimize = None;self.fftpack=None
 		else:
 			self.optimize = optimize;self.fftpack=fftpack
@@ -120,11 +122,11 @@ class ConvenienceClass():
 			ph = ((phase)*180/(np.pi))
 
 			if(frequency<0):
-				#print 'negative frq'
+				#print ('negative frq')
 				return 0,0,0,0,pcov
 
 			if(amplitude<0):
-				#print 'AMP<0'
+				#print ('AMP<0')
 				ph-=180
 
 			if(ph<-90):ph+=360
@@ -372,7 +374,7 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
 				self.ipyConsole.pushVariables({"I":self.I})
 				self.ipyConsole.printText("Access hardware using the Instance 'I'.  e.g.  I.get_average_voltage(0)")                           
 		except:
-			print 'Device Not Connected.'
+			print ('Device Not Connected.')
 		
   	def addConsole(self,**args):
 		#read arguments
@@ -404,7 +406,7 @@ class Experiment(QtGui.QMainWindow,template_exp.Ui_MainWindow,Widgets.CustomWidg
 		self.splash.finish(dock);self.updateSplash(10)
 		dock.widget().setMaximumSize(QtCore.QSize(self.width(), self.height()/3))
 		dock.widget().setMinimumSize(QtCore.QSize(self.width(), self.height()/3))
-		print dock.width(),dock.height()
+		print (dock.width(),dock.height())
 		def dockResize():
 			dock.widget().setMaximumSize(65535,65535)
 			dock.widget().setMinimumSize(60,60)
