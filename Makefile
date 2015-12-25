@@ -9,7 +9,7 @@ docs:
 
 clean:
 	find . -name __PYCACHE__ -o -name "*.pyc" | xargs rm -rf
-	rm -rf build
+	rm -rf build vLabtool.egg-info
 	make -C docs clean
 
 install:
