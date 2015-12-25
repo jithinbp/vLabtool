@@ -7,6 +7,7 @@ all:
 clean:
 	find . -name __PYCACHE__ -o -name "*.pyc" | xargs rm -rf
 	rm -rf build
+	make -C docs clean
 
 install:
 	python setup.py install --install-layout=deb \
