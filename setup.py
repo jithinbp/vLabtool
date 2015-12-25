@@ -32,7 +32,9 @@ def check_root():
 
 class CustomInstall(install):
 	def run(self):
-		install_udev_rules(True)
+                if 'debian' not in self.root:
+                        # we are not building a Debian package
+                        install_udev_rules(True)
 		install.run(self)
 
 data_files = []
