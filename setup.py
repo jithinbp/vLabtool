@@ -35,7 +35,7 @@ class CustomInstall(install):
                 if 'debian' not in self.root:
                         # we are not building a Debian package
                         install_udev_rules(True)
-		install.run(self)
+                install.run(self)
 
 data_files = []
 def subdirs(a_dir):
