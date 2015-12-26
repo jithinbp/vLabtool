@@ -5,7 +5,7 @@ all:    docs
 	DESTDIR=$(DESTDIR) python3 setup.py build
 
 docs:
-	make -C docs dirhtml
+	make -C docs html
 
 clean:
 	find . -name __PYCACHE__ -o -name "*.pyc" | xargs rm -rf
