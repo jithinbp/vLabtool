@@ -33,8 +33,10 @@ def check_root():
 class CustomInstall(install):
 	def run(self):
                 if 'debian' in self.root:
-                        print("GRRRR", self.root, os.path.join(self.root,'lib/udev/rules.d/99-testbench.rules'))
-                        os.makedirs(os.path.join(self.root,'lib/udev/rules.d'))
+                        try:
+                                os.makedirs(os.path.join(self.root,'lib/udev/rules.d'))
+                        except:
+                                pass
                         shutil.copy('proto.rules', os.path.join(self.root,'lib/udev/rules.d/99-testbench.rules'))
                 else:                        
                         install_udev_rules(True)
