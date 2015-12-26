@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # interface - software stack to support the vLabtool.
 #
 # Copyright (C) 2015 by Jithin B.P. <jithinbp@gmail.com>
@@ -254,6 +255,7 @@ class Interface(object):
                 address                        address of the node. a 24 bit number. Printed on the nodes. Can also be retrieved using
                                                 :py:meth:`~NRF24L01_class.NRF24L01.get_nodelist`
                 ==============        ============================================================================================
+
                 :return: :py:meth:`~NRF_NODE.RadioLink`
 
                 .. seealso:: nrf_example_ 
@@ -281,9 +283,9 @@ class Interface(object):
                 ==============        ============================================================================================
                 **Arguments** 
                 ==============        ============================================================================================
-                ch                Channel to select as input. ['CH1'..'CH9','5V','PCS','9V','IN1','SEN']
-                ns                Number of samples to fetch. Maximum 10000
-                tg                Timegap between samples in microseconds
+                ch                    Channel to select as input. ['CH1'..'CH9','5V','PCS','9V','IN1','SEN']
+                ns                    Number of samples to fetch. Maximum 10000
+                tg                    Timegap between samples in microseconds
                 ==============        ============================================================================================
 
                 .. figure:: ../images/capture1.png
@@ -361,7 +363,7 @@ class Interface(object):
                 **Arguments** 
                 ==============        ============================================================================================
                 ns                                Number of samples to fetch. Maximum 2500
-                tg                                Timegap between samples in microseconds. Minimum 1.75uS
+                tg                                Timegap between samples in microseconds. Minimum 1.75 µs
                 ==============        ============================================================================================
 
                 .. figure:: ../images/capture4.png
@@ -403,13 +405,13 @@ class Interface(object):
                 ===================        ============================================================================================
                 **Arguments** 
                 ===================        ============================================================================================
-                num                           Channels to acquire. 1/2/4
-                samples                           Total points to store per channel. Maximum 3200 total.
-                tg                           Timegap between two successive samples (in uSec)
-                channel_one_input         map channel 1 to 'CH1' ... 'CH9'
+                num                        Channels to acquire. 1/2/4
+                samples                    Total points to store per channel. Maximum 3200 total.
+                tg                         Timegap between two successive samples (in µs)
+                channel_one_input          map channel 1 to 'CH1' ... 'CH9'
                 \*\*kwargs        
                 
-                * trigger                   Whether or not to trigger the oscilloscope based on the voltage level set by :func:`configure_trigger`
+                * trigger                  Whether or not to trigger the oscilloscope based on the voltage level set by :func:`configure_trigger`
                 ===================        ============================================================================================
 
                 .. raw:: html
@@ -503,7 +505,7 @@ class Interface(object):
                 ===================        ============================================================================================
                 channel                         channel to acquire data from 'CH1' ... 'CH9'
                 samples                           Total points to store per channel. Maximum 3200 total.
-                tg                           Timegap between two successive samples (in uSec)
+                tg                           Timegap between two successive samples (in µs)
                 \*\*kwargs        
                 
                 * trigger                   Whether or not to trigger the oscilloscope based on the voltage level set by :func:`configure_trigger`
@@ -545,7 +547,7 @@ class Interface(object):
                 **Arguments** 
                 ==============        ============================================================================================
                 channel_number        Any of the maximum of four channels that the oscilloscope captured. 1/2/3/4
-                 ==============        ============================================================================================
+                ==============        ============================================================================================
 
                 :return: time array,voltage array
 
@@ -881,7 +883,7 @@ class Interface(object):
                 ==============        ============================================================================================
                 **Arguments**
                 ==============        ============================================================================================
-                pin                The input pin to measure frequency from. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
+                pin                   The input pin to measure frequency from. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
                                                 
                 ==============        ============================================================================================
 
@@ -904,11 +906,9 @@ class Interface(object):
                 ==============        ============================================================================================
                 **Arguments** 
                 ==============        ============================================================================================
-                channel                The input to measure frequency from. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
-                timeout                This is a blocking call which will wait for one full wavelength before returning the
-                                calculated frequency.
-                                Use the timeout option if you're unsure of the input signal.
-                                returns 0 if timed out
+                channel               The input to measure frequency from. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
+                timeout               This is a blocking call which will wait for one full wavelength before returning the calculated frequency. Use the timeout option if you're unsure of the input signal.
+                                      returns 0 if timed out
                 ==============        ============================================================================================
 
                 :return float: frequency
@@ -952,9 +952,9 @@ class Interface(object):
                 ==============        ============================================================================================
                 **Arguments** 
                 ==============        ============================================================================================
-                channel                The input to measure time between two rising edges.'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
-                timeout                Use the timeout option if you're unsure of the input signal time period.
-                                returns 0 if timed out
+                channel               The input to measure time between two rising edges.'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
+                timeout               Use the timeout option if you're unsure of the input signal time period.
+                                      returns 0 if timed out
                 ==============        ============================================================================================
 
                 :return float: time between two rising edges of input signal
@@ -984,9 +984,9 @@ class Interface(object):
                 ==============        ============================================================================================
                 **Arguments** 
                 ==============        ============================================================================================
-                channel                The input to measure time between two falling edges. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
-                timeout                Use the timeout option if you're unsure of the input signal time period.
-                                returns 0 if timed out
+                channel               The input to measure time between two falling edges. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
+                timeout               Use the timeout option if you're unsure of the input signal time period.
+                                      returns 0 if timed out
                 ==============        ============================================================================================
 
                 :return float: time between two falling edges of input signal
@@ -1020,9 +1020,9 @@ class Interface(object):
                 ==============        ============================================================================================
                 **Arguments** 
                 ==============        ============================================================================================
-                channel                The input pin to measure wavelength and high time. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
-                timeout                Use the timeout option if you're unsure of the input signal time period.
-                                returns 0 if timed out
+                channel               The input pin to measure wavelength and high time. 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
+                timeout               Use the timeout option if you're unsure of the input signal time period.
+                                      returns 0 if timed out
                 ==============        ============================================================================================
 
                 :return : wavelength,duty cycle
@@ -1062,22 +1062,22 @@ class Interface(object):
                 ==============        ============================================================================================
                 **Arguments** 
                 ==============        ============================================================================================
-                channel1                The input pin to measure first logic level change
-                channel1                The input pin to measure second logic level change
+                channel1              The input pin to measure first logic level change
+                channel2              The input pin to measure second logic level change
                                                         * 'ID1' , 'ID2', 'ID3', 'ID4', 'LMETER','CH1'
                                                         
-                edge1                        The type of level change to detect in order to start the timer
+                edge1                 The type of level change to detect in order to start the timer
                                                         * 'rising'
                                                         * 'falling'
                                                         * 'four rising edges'
                                                         
-                edge2                        The type of level change to detect in order to stop the timer
+                edge2                 The type of level change to detect in order to stop the timer
                                                         * 'rising'
                                                         * 'falling'
                                                         * 'four rising edges'
                                                         
-                timeout                        Use the timeout option if you're unsure of the input signal time period.
-                                        returns -1 if timed out
+                timeout               Use the timeout option if you're unsure of the input signal time period.
+                                      returns -1 if timed out
                 ==============        ============================================================================================
 
                 :return : time
@@ -1173,13 +1173,10 @@ class Interface(object):
                 ==============        ======================================================================================================
                 **Arguments** 
                 ==============        ======================================================================================================
-                waiting_time           Total time to allow the logic analyzer to collect data.
-                                   This is implemented using a simple sleep routine, so if large delays will be involved,
-                                   refer to :func:`start_one_channel_LA` to start the acquisition, and :func:`fetch_LA_channels` to
-                                   retrieve data from the hardware after adequate time. The retrieved data is stored
-                                   in the array self.dchans[0].timestamps. Divide each timestamp by 64e6 to convert to seconds.
-                trigger                   Edge trigger on ID1.
-                                        options = 0  , 'rising' , 'falling'
+                waiting_time          Total time to allow the logic analyzer to collect data.
+                                      This is implemented using a simple sleep routine, so if large delays will be involved, refer to :func:`start_one_channel_LA` to start the acquisition, and :func:`fetch_LA_channels` to retrieve data from the hardware after adequate time. The retrieved data is stored in the array self.dchans[0].timestamps. Divide each timestamp by 64e6 to convert to seconds.
+                trigger               Edge trigger on ID1.
+                                        *  options = 0  , 'rising' , 'falling'
                 ==============        ======================================================================================================
                 
                 :return: Bool initial_state Low/High, timestamp array in Seconds
@@ -1256,7 +1253,7 @@ class Interface(object):
                         a.prescaler = 0
                         a.datatype='long'
                         a.length = self.MAX_SAMPLES/4
-                        a.maximum_time = maximum_time*1e6 #conversion to uS
+                        a.maximum_time = maximum_time*1e6 #conversion to µs
                         a.mode = EVERY_EDGE
 
                 #def start_one_channel_LA(self,**args):
@@ -1323,7 +1320,7 @@ class Interface(object):
                         a.prescaler = 0
                         a.datatype='long'
                         a.length = self.MAX_SAMPLES/4
-                        a.maximum_time = 67*1e6 #conversion to uS
+                        a.maximum_time = 67*1e6 #conversion to µs
                         a.mode = args.get('channel_mode',1)
                         a.initial_state_override=False
                         '''
@@ -1344,20 +1341,20 @@ class Interface(object):
                 **Arguments** 
                 ================== ======================================================================================================
                 args
-                channel                        'ID1',...'LMETER','CH1'
-                trigger_channel                'ID1',...'LMETER','CH1'
+                channel            'ID1',...'LMETER','CH1'
+                trigger_channel    'ID1',...'LMETER','CH1'
 
-                channnel_mode                acquisition mode.
-                                        default value: 1
+                channnel_mode      acquisition mode.
+                                     * default value: 1
 
-                                        EVERY_SIXTEENTH_RISING_EDGE = 5
-                                        EVERY_FOURTH_RISING_EDGE    = 4
-                                        EVERY_RISING_EDGE           = 3
-                                        EVERY_FALLING_EDGE          = 2
-                                        EVERY_EDGE                  = 1
-                                        DISABLED                    = 0
+                                     * EVERY_SIXTEENTH_RISING_EDGE = 5
+                                     * EVERY_FOURTH_RISING_EDGE    = 4
+                                     * EVERY_RISING_EDGE           = 3
+                                     * EVERY_FALLING_EDGE          = 2
+                                     * EVERY_EDGE                  = 1
+                                     * DISABLED                    = 0
                 
-                trigger_mode                same as channel_mode.
+                trigger_mode       same as channel_mode.
                                         default_value : 3
 
                 ================== ======================================================================================================
@@ -1388,7 +1385,7 @@ class Interface(object):
                 a.prescaler = 0
                 a.datatype='long'
                 a.length = self.MAX_SAMPLES/4
-                a.maximum_time = 67*1e6 #conversion to uS
+                a.maximum_time = 67*1e6 #conversion to µs
                 a.mode = args.get('channel_mode',1)
                 if trmode in [3,4,5]:
                         a.initial_state_override = 2
@@ -1404,8 +1401,8 @@ class Interface(object):
                 ==============        ============================================================================================
                 **Arguments** 
                 ==============        ============================================================================================
-                trigger                        Bool . Enable rising edge trigger on ID1
-                maximum_time        Total time to sample. If total time exceeds 67 seconds, a prescaler will be used in the reference clock
+                trigger               Bool . Enable rising edge trigger on ID1
+                maximum_time          Total time to sample. If total time exceeds 67 seconds, a prescaler will be used in the reference clock
                 ==============        ============================================================================================
 
                 ::
@@ -1428,7 +1425,7 @@ class Interface(object):
                 self.H.__get_ack__()
                 n=0;
                 for a in self.dchans[:2]:
-                        a.prescaler = 0;a.length = self.MAX_SAMPLES/4;        a.datatype='long';a.maximum_time = maximum_time*1e6 #conversion to uS
+                        a.prescaler = 0;a.length = self.MAX_SAMPLES/4;        a.datatype='long';a.maximum_time = maximum_time*1e6 #conversion to µs
                         a.mode = modes[n];a.channel_number=chans[n]
                         n+=1
                 self.digital_channels_in_buffer = 2
@@ -1441,20 +1438,20 @@ class Interface(object):
                 **Arguments** 
                 ================== ======================================================================================================
                 args
-                trigger_channel                'ID1',...'LMETER','CH1'
+                trigger_channel    'ID1',...'LMETER','CH1'
 
-                modes                    modes for each channel. Array .
-                                        default value: [1,1,1]
+                modes              modes for each channel. Array .
+                                       * default value: [1,1,1]
 
-                                        EVERY_SIXTEENTH_RISING_EDGE = 5
-                                        EVERY_FOURTH_RISING_EDGE    = 4
-                                        EVERY_RISING_EDGE           = 3
-                                        EVERY_FALLING_EDGE          = 2
-                                        EVERY_EDGE                  = 1
-                                        DISABLED                    = 0
+                                       * EVERY_SIXTEENTH_RISING_EDGE = 5
+                                       * EVERY_FOURTH_RISING_EDGE    = 4
+                                       * EVERY_RISING_EDGE           = 3
+                                       * EVERY_FALLING_EDGE          = 2
+                                       * EVERY_EDGE                  = 1
+                                       * DISABLED                    = 0
                 
-                trigger_mode                same as modes(previously documented keyword argument)
-                                        default_value : 3
+                trigger_mode       same as modes(previously documented keyword argument)
+                                   default_value : 3
 
                 ================== ======================================================================================================
                 
@@ -1498,24 +1495,19 @@ class Interface(object):
                 ==============        ============================================================================================
                 **Arguments** 
                 ==============        ============================================================================================
-                trigger                        Bool . Enable rising edge trigger on ID1
+                trigger               Bool . Enable rising edge trigger on ID1
 
-                maximum_time        Maximum delay expected between two logic level changes.
-                                If total time exceeds 1 mS, a prescaler will be used in the reference clock
-                                However, this only refers to the maximum time between two successive level changes. If a delay larger
-                                than .26 S occurs, it will be truncated by modulo .26 S.
-                                If you need to record large intervals, try single channel/ two channel modes which use 32 bit counters
-                                capable of time interval up to 67 seconds.
+                maximum_time          Maximum delay expected between two logic level changes. If total time exceeds 1 mS, a prescaler will be used in the reference clock. However, this only refers to the maximum time between two successive level changes. If a delay larger than .26 S occurs, it will be truncated by modulo .26 S. If you need to record large intervals, try single channel/ two channel modes which use 32 bit counters capable of time interval up to 67 seconds.
 
-                mode                modes for each channel. Array with four elements
-                                default values: [1,1,1,1]
+                mode                  modes for each channel. Array with four elements.
+                                          * default values: [1,1,1,1]
 
-                                EVERY_SIXTEENTH_RISING_EDGE = 5
-                                EVERY_FOURTH_RISING_EDGE    = 4
-                                EVERY_RISING_EDGE           = 3
-                                EVERY_FALLING_EDGE          = 2
-                                EVERY_EDGE                  = 1
-                                DISABLED                    = 0
+                                          * EVERY_SIXTEENTH_RISING_EDGE = 5
+                                          * EVERY_FOURTH_RISING_EDGE    = 4
+                                          * EVERY_RISING_EDGE           = 3
+                                          * EVERY_FALLING_EDGE          = 2
+                                          * EVERY_EDGE                  = 1
+                                          * DISABLED                    = 0
 
                 ==============        ============================================================================================
 
@@ -1559,7 +1551,7 @@ class Interface(object):
                         a.prescaler = prescale
                         a.length = self.MAX_SAMPLES/4
                         a.datatype='int'
-                        a.maximum_time = maximum_time*1e6 #conversion to uS
+                        a.maximum_time = maximum_time*1e6 #conversion to µs
                         a.mode=mode[n]
                         n+=1
 
@@ -1733,8 +1725,8 @@ class Interface(object):
                 ==============        ============================================================================================
                 **Arguments** 
                 ==============        ============================================================================================
-                \*\*kwargs        OD1,OD2,SQR1,SQR2
-                                        states(0 or 1)
+                \*\*kwargs            OD1,OD2,SQR1,SQR2
+                                        * states(0 or 1)
                 ==============        ============================================================================================
 
                 >>> I.set_state(OD1=1,OD2=0,SQR1=1)
@@ -1789,14 +1781,14 @@ class Interface(object):
                 return  P
 
 
-        def get_capacitance(self,current_range,trim, Charge_Time):        #time in uS
+        def get_capacitance(self,current_range,trim, Charge_Time):        #time in µs
                 """
                 measures capacitance of component connected between IN1 and ground
                 
                 .. warning:: Non standard arguments! Needs to be rewritten
 
                 :param int current_range: 
-                        current range to use (0,1,2,3) ->(550uA,.55uA,5.5uA,55uA)
+                        current range to use (0,1,2,3) ->(550 µA,.55 µA,5.5 µA,55 µA)
                 :param int trim: 
                         trimming the current range selected. set as 0 
                 :param int Charge_Time: 
@@ -1805,11 +1797,11 @@ class Interface(object):
 
                 .. math::
 
-                        Q_{stored} = C*V
+                        Q_{stored} = C \\times V
                         
-                        I_{constant}*time = C*V
+                        I_{constant} \\times time = C \\times V
                         
-                        C = I_{constant}*time/V_{measured}
+                        C = \\frac{I_{constant} \\times time}{V_{measured}}
 
                 """
                 self.H.__sendByte__(COMMON)
@@ -1951,17 +1943,17 @@ class Interface(object):
 
         def get_ctmu_voltage(self,channel,Crange,tgen=1):
                 """
-                get_ctmu_voltage(5,2)  will activate a constant current source of 5.5uA on IN1 and then measure the voltage at the output.
+                get_ctmu_voltage(5,2)  will activate a constant current source of 5.5 µA on IN1 and then measure the voltage at the output.
                 If a diode is used to connect IN1 to ground, the forward voltage drop of the diode will be returned. e.g. .6V for a 4148diode.
                 
                 If a resistor is connected, ohm's law will be followed within reasonable limits
                 
                 channel=5 for IN1
                 
-                CRange=0   implies 550uA
-                CRange=1   implies 0.55uA
-                CRange=2   implies 5.5uA
-                CRange=3   implies 55uA
+                CRange=0   implies 550 µA
+                CRange=1   implies 0.55 µA
+                CRange=2   implies 5.5 µA
+                CRange=3   implies 55 µA
                 
                 :return: Voltage
                 """        
@@ -2454,14 +2446,15 @@ class Interface(object):
                 **Arguments** 
                 ==============        ============================================================================================
                 \*\*kwargs
-                h0                                High time for SQR1 (0-0xFFFF uS)
-                p1                                Phase shift for SQR2 (0-0xFFFF uS)
-                h1                                High time for SQR2 (0-0xFFFF uS)
-                p2                                Phase shift for OD1  (0-0xFFFF uS)
-                h2                                High time for OD1  (0-0xFFFF uS)
-                p3                                Phase shift for OD2  (0-0xFFFF uS)
-                h3                                High time for OD2  (0-0xFFFF uS)
+                h0                    High time for SQR1 (0-0xFFFF µs)
+                p1                    Phase shift for SQR2 (0-0xFFFF µs)
+                h1                    High time for SQR2 (0-0xFFFF µs)
+                p2                    Phase shift for OD1  (0-0xFFFF µs)
+                h2                    High time for OD1  (0-0xFFFF µs)
+                p3                    Phase shift for OD2  (0-0xFFFF µs)
+                h3                    High time for OD2  (0-0xFFFF µs)
                 ==============        ============================================================================================
+
                 NOTE: hx+px must be less than 0xFFFF
                 """
                 wavelength = 0xFFFF
@@ -2667,11 +2660,11 @@ class Interface(object):
                 ==============        ============================================================================================
                 **Arguments** 
                 ==============        ============================================================================================
-                baudrate        BAUDRATE to use
-                persist                If set to True, the device will stay in passthrough mode until the next power cycle.
-                                Otherwise(default scenario), the device will return to normal operation if no data is sent/
-                                received for a period greater than one second at a time.
+                baudrate              BAUDRATE to use
+                persist               If set to True, the device will stay in passthrough mode until the next power cycle.
+                                      Otherwise(default scenario), the device will return to normal operation if no data is sent/received for a period greater than one second at a time.
                 ==============        ============================================================================================
+
                 '''
                 self.H.__sendByte__(PASSTHROUGHS)
                 self.H.__sendByte__(PASS_UART)
@@ -2687,17 +2680,17 @@ class Interface(object):
                 '''
                 
                 Read data from ultrasonic distance sensor HC-SR04/HC-SR05.  Sensors must have separate trigger and output pins.
-                First a 10uS pulse is output on SQR3.  SQR3 must be connected to the TRIG pin on the sensor prior to use.
+                First a 10 µs pulse is output on SQR3.  SQR3 must be connected to the TRIG pin on the sensor prior to use.
 
                 Upon receiving this pulse, the sensor emits a sequence of sound pulses, and the logic level of its output
                 pin(which we will monitor via ID1) is also set high.  The logic level goes LOW when the sound packet
                 returns to the sensor, or when a timeout occurs.
 
                 The ultrasound sensor outputs a series of 8 sound pulses at 40KHz which corresponds to a time period
-                of 25uS per pulse. These pulses reflect off of the nearest object in front of the sensor, and return to it.
+                of 25 µs per pulse. These pulses reflect off of the nearest object in front of the sensor, and return to it.
                 The time between sending and receiving of the pulse packet is used to estimate the distance.
                 If the reflecting object is either too far away or absorbs sound, less than 8 pulses may be received, and this
-                can cause a measurement error of 25uS which corresponds to 8mm.
+                can cause a measurement error of 25 µs which corresponds to 8mm.
                 
                 '''
                 self.H.__sendByte__(NONSTANDARD_IO)

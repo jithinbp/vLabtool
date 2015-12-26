@@ -25,10 +25,9 @@ import sys, os
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 
 
-sys.path.insert(0, os.path.abspath('../'))
-sys.path.insert(0, os.path.abspath('../Apps/'))
+sys.path.insert(0, os.path.abspath('../vLabtool'))
 autodoc_member_order = 'bysource'
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode','sphinx.ext.todo','sphinx.ext.autosummary']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode','sphinx.ext.todo','sphinx.ext.autosummary','sphinx.ext.pngmath']
 [extensions]
 todo_include_todos=True
 autosummary_generate = True
@@ -218,8 +217,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', '', u'. Documentation',
-     [u'Jithin B.'], 1)
+        ('index', '', u'. Documentation',
+         [u'Jithin B.'], 1),
 ]
 
 # If true, show URL addresses after external links.
