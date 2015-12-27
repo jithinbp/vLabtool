@@ -1,5 +1,5 @@
 from __future__ import print_function
-from commands_proto import *
+from vLabtool.commands_proto import *
 import time
 
 class NRF24L01():
@@ -219,12 +219,13 @@ class NRF24L01():
 
 
 	def read_payload(self,numbytes):
-		self.H.__sendByte__(NRFL01)
-		self.H.__sendByte__(NRF_READPAYLOAD)
-		self.H.__sendByte__(numbytes)
-		data=self.H.fd.read(numbytes)
-		self.H.__get_ack__()
-		return [ord(a) for a in data]
+          numbytes=int(numbytes)
+          self.H.__sendByte__(NRFL01)
+          self.H.__sendByte__(NRF_READPAYLOAD)
+          self.H.__sendByte__(numbytes)
+          data=self.H.fd.read(numbytes)
+          self.H.__get_ack__()
+          return [Byte.unpack(a)[0] for a in data]
 
 
 	def write_payload(self,data,verbose=False,**args): 
@@ -267,7 +268,8 @@ class NRF24L01():
 		self.H.__sendByte__(NRFL01)
 		self.H.__sendByte__(NRF_TRANSACTION)
 		self.H.__sendByte__(len(data)) #total Data bytes coming through
-		if not args.has_key('listen'):args['listen']=True
+		if 'listen' not in args:
+                        args['listen']=True
 		if args.get('listen',False):data[0]|=0x80  # You need this if hardware must wait for a reply
 		timeout = args.get('timeout',200)
 		verbose = args.get('verbose',False)
@@ -275,7 +277,7 @@ class NRF24L01():
 		for a in data:
 			self.H.__sendByte__(a)
 
-		numbytes=self.H.__getByte__()
+		numbytes=int(self.H.__getByte__())
 		if numbytes: data = self.H.fd.read(numbytes)
 		else: data=[]
 		val=self.H.__get_ack__()>>4
@@ -286,7 +288,7 @@ class NRF24L01():
 		if val&0x7:
 			self.flush()
 			return False
-		return [ord(a) for a in data]
+		return [Bytes.unpack(a)[0] for a in data]
 
 	def transactionWithRetries(self,data,**args):
 		retries = args.get('retries',5)
@@ -437,9 +439,9 @@ class NRF24L01():
 		Dynamic Payload with auto acknowledge is enabled.
 		'''
 		self.PAYLOAD_SIZE=args.get('PAYLOAD_SIZE',self.PAYLOAD_SIZE)
-		if not args.has_key('myaddr0'):
+		if 'myaddr0' not in args:
 			args['myaddr0']=0xA523B5
-		#if not args.has_key('sendaddr'):
+		#if 'sendaddr' not in args:
 		#	args['sendaddr']=0xA523B5
 		print (args)
 		self.init()

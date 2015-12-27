@@ -1,6 +1,6 @@
 from __future__ import print_function
 import numpy as np
-from commands_proto import *
+from vLabtool.commands_proto import *
 digital_channel_names=['ID1','ID2','ID3','ID4']
 
 

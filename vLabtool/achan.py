@@ -244,7 +244,7 @@ class analogAcquisitionChannel:
 		self.name = keys.get('channel',self.channel)	
 		self.source = keys.get('source',self.source)
 		self.resolution = keys.get('resolution',self.resolution)	
-		l = keys.get('length',self.length)	
+		l = keys.get('length',self.length)
 		t = keys.get('timebase',self.timebase)
 		if t != self.timebase or l != self.length:
 			self.timebase = t
@@ -252,10 +252,11 @@ class analogAcquisitionChannel:
 			self.regenerate_xaxis()
 
 	def regenerate_xaxis(self):
-		for a in range(self.length): self.xaxis[a] = self.timebase*a
+                for a in range(int(self.length)):
+                        self.xaxis[a] = self.timebase*a
 
 	def get_xaxis(self):
-		return self.xaxis[:self.length]
+                return self.xaxis[:self.length]
 	def get_yaxis(self):
-		return self.yaxis[:self.length]
+                return self.yaxis[:self.length]
 

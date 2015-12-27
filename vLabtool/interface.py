@@ -24,13 +24,17 @@ import sip
 sip.setapi("QString", 2)
 sip.setapi("QVariant", 2)
 
-from commands_proto import *
+from vLabtool.commands_proto import *
 
-import packet_handler
-import I2C_class,SPI_class,NRF24L01_class,MCP4728_class,NRF_NODE
+import vLabtool.packet_handler as packet_handler
+import vLabtool.I2C_class as I2C_class
+import vLabtool.SPI_class as SPI_class
+import vLabtool.NRF24L01_class as NRF24L01_class
+import vLabtool.MCP4728_class as MCP4728_class
+import vLabtool.NRF_NODE as NRF_NODE
 
-from achan import *
-from digital_channel import *
+from vLabtool.achan import *
+from vLabtool.digital_channel import *
 import serial,string,fcntl
 import time
 import sys
@@ -110,7 +114,7 @@ class Interface(object):
                                 print ('ADC calibration found...')
                                 import struct
                                 adc_shifts = self.read_bulk_flash(self.ADC_SHIFTS_LOCATION1,2048)+self.read_bulk_flash(self.ADC_SHIFTS_LOCATION2,2048)
-                                adc_shifts = [ord(a) for a in adc_shifts]
+                                adc_shifts = [Bytes.unpack(a)[0] for a in adc_shifts]
                                 print ('ADC INL correction table loaded.')
                                 polynomials=polynomials.split('!!!!')[0]
                                 for a in polynomials.split('>|')[1:]:
@@ -299,7 +303,7 @@ class Interface(object):
                 Example
                 
                 >>> from pylab import *
-                >>> from Labtools import interface
+                >>> from vLabtool import interface
                 >>> I=interface.Interface()
                 >>> x,y = I.capture1('CH1',3200,1)
                 >>> plot(x,y)
@@ -337,7 +341,7 @@ class Interface(object):
                 Example        
         
                 >>> from pylab import *
-                >>> from Labtools import interface
+                >>> from vLabtool import interface
                 >>> I=interface.Interface()
                 >>> x,y1,y2 = I.capture2(1600,1.25)
                 >>> plot(x,y1)                                
@@ -585,8 +589,8 @@ class Interface(object):
                         conversion_done = self.H.__getByte__()
                         samples = self.H.__getInt__()
                         self.H.__get_ack__()
-                except:
-                        print ('disconnected!!')
+                except Exception as e:
+                        print ('disconnected!! error: ', e)
                         #sys.exit(1)
                 return conversion_done,samples
 
@@ -606,14 +610,14 @@ class Interface(object):
                 if(channel_number>self.channels_in_buffer):
                         print ('Channel unavailable')
                         return False
-                data=''
+                data=b''
                 for i in range(int(samples/self.data_splitting)):
                         self.H.__sendByte__(ADC)
                         self.H.__sendByte__(GET_CAPTURE_CHANNEL)
                         self.H.__sendByte__(channel_number-1)        #starts with A0 on PIC
                         self.H.__sendInt__(self.data_splitting)
                         self.H.__sendInt__(i*self.data_splitting)
-                        data+= self.H.fd.read(self.data_splitting*2)                #reading int by int sometimes causes a communication error. this works better.
+                        data+= self.H.fd.read(int(self.data_splitting*2))                #reading int by int sometimes causes a communication error. this works better.
                         self.H.__get_ack__()
 
                 if samples%self.data_splitting:
@@ -622,10 +626,11 @@ class Interface(object):
                         self.H.__sendByte__(channel_number-1)        #starts with A0 on PIC
                         self.H.__sendInt__(samples%self.data_splitting)
                         self.H.__sendInt__(samples-samples%self.data_splitting)
-                        data += self.H.fd.read(2*(samples%self.data_splitting))                 #reading int by int sometimes causes a communication error. this works better.
+                        data += self.H.fd.read(int(2*(samples%self.data_splitting)))                 #reading int by int sometimes causes a communication error. this works better.
                         self.H.__get_ack__()
 
-                for a in range(samples): self.buff[a] = ord(data[a*2])|(ord(data[a*2+1])<<8)
+                for a in range(int(samples)):
+                        self.buff[a] = ShortInt.unpack(data[a*2:a*2+2])[0]
                 self.achans[channel_number-1].yaxis = self.achans[channel_number-1].fix_value(self.buff[:samples])
                 return True
 
@@ -652,9 +657,10 @@ class Interface(object):
                 self.H.__sendByte__(channel_number-1)        #starts with A0 on PIC
                 self.H.__sendInt__(samples)
                 self.H.__sendInt__(offset)
-                data = self.H.fd.read(samples*2)                #reading int by int sometimes causes a communication error. this works better.
+                data = self.H.fd.read(int(samples*2))                #reading int by int sometimes causes a communication error. this works better.
                 self.H.__get_ack__()
-                for a in range(samples): self.buff[a] = ord(data[a*2])|(ord(data[a*2+1])<<8)
+                for a in range(int(samples)):
+                        self.buff[a] = ShortInt.unpack(data[a*2:a*2+2])[0]
                 self.achans[channel_number-1].yaxis = self.achans[channel_number-1].fix_value(self.buff[:samples])
                 return True
 
@@ -966,7 +972,8 @@ class Interface(object):
                 self.H.__sendByte__(GET_TIMING)
                 timeout_msb = int((timeout*64e6))>>16
                 self.H.__sendInt__(timeout_msb)
-                self.H.__sendByte__( EVERY_RISING_EDGE<<2 | 2)
+                # self.H.__sendByte__( EVERY_RISING_EDGE<<2 | 2)
+                self.H.__sendByte__( 0b011 << 2 | 2)
                 self.H.__sendByte__(self.__calcDChan__(channel))
                 tmt = self.H.__getInt__()
                 x=[self.H.__getLong__() for a in range(2)]
@@ -998,7 +1005,8 @@ class Interface(object):
                 self.H.__sendByte__(GET_TIMING)
                 timeout_msb = int((timeout*64e6))>>16
                 self.H.__sendInt__(timeout_msb)
-                self.H.__sendByte__( EVERY_FALLING_EDGE<<2 | 2)
+                # self.H.__sendByte__( EVERY_FALLING_EDGE<<2 | 2)
+                self.H.__sendByte__( 0b010 << 2 | 2)
                 self.H.__sendByte__(self.__calcDChan__(channel))
 
                 tmt = self.H.__getInt__()
@@ -1604,11 +1612,10 @@ class Interface(object):
                 self.H.__sendInt__(bytes)
                 self.H.__sendByte__(chan-1)
 
-                ss = self.H.fd.read(bytes*2)
+                ss = self.H.fd.read(int(bytes*2))
                 t = np.zeros(bytes*2)
-                for a in range(bytes):
-                        t[a] = ord(ss[0+a*2]) |(ord(ss[1+a*2])<<8)
-
+                for a in range(int(bytes)):
+                        t[a] = ShortInt.unpack(ss[a*2:a*2+2])[0]
                 self.H.__get_ack__()
                 t=np.trim_zeros(t)
                 b=1;rollovers=0
@@ -1634,10 +1641,10 @@ class Interface(object):
                 self.H.__sendByte__(FETCH_LONG_DMA_DATA)
                 self.H.__sendInt__(bytes)
                 self.H.__sendByte__(chan-1)
-                ss = self.H.fd.read(bytes*4)
+                ss = self.H.fd.read(int(bytes*4))
                 tmp = np.zeros(bytes)
-                for a in range(bytes):
-                        tmp[a] = ord(ss[0+a*4])|(ord(ss[1+a*4])<<8)|(ord(ss[2+a*4])<<16)|(ord(ss[3+a*4])<<24)
+                for a in range(int(bytes)):
+                        tmp[a] = Integer.unpack(ss[a*4:a*4+4])[0]
                 self.H.__get_ack__()
                 tmp = np.trim_zeros(tmp) 
                 return tmp
@@ -1734,17 +1741,17 @@ class Interface(object):
 
                 """
                 data=0
-                if kwargs.has_key('OD1'):
+                if 'OD1' in kwargs:
                         data|= 0x40|(kwargs.get('OD1')<<2)
-                if kwargs.has_key('OD2'):
+                if 'OD2' in kwargs:
                         data|= 0x80|(kwargs.get('OD2')<<3)
-                if kwargs.has_key('SQR1'):
+                if 'SQR1' in kwargs:
                         data|= 0x10|(kwargs.get('SQR1'))
-                if kwargs.has_key('SQR2'):
+                if 'SQR2' in kwargs:
                         data|= 0x20|(kwargs.get('SQR2')<<1)
-                if kwargs.has_key('SQR3'):
+                if 'SQR3' in kwargs:
                         data|= 0x40|(kwargs.get('SQR3')<<2)
-                if kwargs.has_key('SQR4'):
+                if 'SQR4' in kwargs:
                         data|= 0x80|(kwargs.get('SQR4')<<3)
                 self.H.__sendByte__(DOUT)
                 self.H.__sendByte__(SET_STATE)
@@ -1880,7 +1887,7 @@ class Interface(object):
                 self.H.__sendByte__(READ_BULK_FLASH)
                 self.H.__sendInt__(bytes)         #send the location
                 self.H.__sendByte__(page)
-                ss=self.H.fd.read(bytes)
+                ss=self.H.fd.read(int(bytes))
                 self.H.__get_ack__()
                 return ss
 
@@ -2188,7 +2195,8 @@ class Interface(object):
                 self.H.__sendByte__(RETRIEVE_BUFFER)
                 self.H.__sendInt__(starting_position)
                 self.H.__sendInt__(total_points)
-                for a in range(total_points): self.buff[a]=self.H.__getInt__()
+                for a in range(int(total_points)):
+                        self.buff[a]=self.H.__getInt__()
                 self.H.__get_ack__()
 
         def clear_buffer(self,starting_position,total_points):

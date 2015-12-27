@@ -21,7 +21,7 @@ import time,sys
 from vLabtool.templates import template_scope
 from vLabtool.customui_rc import *
 
-import sys,os,string
+import sys,os
 import time
 import sys
 
@@ -49,7 +49,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 		if not args.DeviceNumber: args.DeviceNumber=1
 		dv=int(args.DeviceNumber)
 		self.I = interface.Interface()
-		self.setWindowTitle('vLabtool : '+self.I.H.version_string)
+		self.setWindowTitle(u'vLabtool : ' + self.I.H.version_string.decode("utf-8"))
 		
 		self.dacval=0
 
@@ -262,7 +262,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 			if len(self.I.dchans[0].timestamps)>2:
 				offset = self.I.dchans[0].timestamps[0]
 				txt = 'CH1: Offset:\t%.3euS\ttimestamps(uS):\t'%(offset/64.)
-				txt += string.join(['%.2e'%(a/64.) for a in (self.I.dchans[0].timestamps[1:4]-offset)],'\t')
+				txt += '\t'.join(['%.2e'%(a/64.) for a in (self.I.dchans[0].timestamps[1:4]-offset)])
 				self.message_label.setText(txt+'...')
 			else:
 				self.message_label.setText('CH1: too few points to display')

@@ -1,6 +1,6 @@
 from __future__ import print_function
-from commands_proto import *
-import I2C_class
+from vLabtool.commands_proto import *
+import vLabtool.I2C_class as I2C_class
 import numpy as np
 
 class MCP4728:

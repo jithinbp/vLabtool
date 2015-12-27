@@ -27,9 +27,11 @@ class CustomWidgets:
 
 	def newWidget(self,widget_type,**args):
 			b=widget_type(**args)
-			if(args.has_key('object_name')): b.setObjectName(args.get('object_name'))
-			if(args.has_key('text')): b.setText(args.get('text'))
-			if(args.has_key('items')):
+			if 'object_name' in args:
+                                b.setObjectName(args.get('object_name'))
+			if 'text' in args:
+                                b.setText(args.get('text'))
+			if 'items' in args:
 				for a in args.get('items'): b.addItem(a)
 			self.updateWidgetBay(b)
 			return b
