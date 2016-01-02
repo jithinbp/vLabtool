@@ -1,4 +1,4 @@
-from commands_proto import *
+from vLabtool.commands_proto import *
 
 class SPI():
 	"""

@@ -38,6 +38,7 @@
 
 
 """
+from __future__ import print_function
 
 from vLabtool.experiment import Experiment,ConvenienceClass
 import vLabtool.interface as interface
@@ -76,12 +77,12 @@ class Handler(QtGui.QFrame,Ui_Form):
 		self.Params=[]
 		
 	def run(self):
-		print self.I.get_average_voltage('CH1')
+		print (self.I.get_average_voltage('CH1'))
 		self.I.H.loadBurst=True
 		self.I.capture_traces(1,5000,self.tg,trigger=False)
 		self.state = 0 if self.state else 1
 		self.I.set_state(OD1=self.state)
-		print self.I.H.sendBurst()
+		print (self.I.H.sendBurst())
 		if(self.state):self.indicator.setStyleSheet(self.ON)
 		else:self.indicator.setStyleSheet(self.OFF)
 		self.CH1Fit.setData([],[])
@@ -112,10 +113,10 @@ class Handler(QtGui.QFrame,Ui_Form):
 
 	def showData(self):
 		self.lognum+=1
-		print '------------------------',self.lognum,'------------------'
+		print ('------------------------',self.lognum,'------------------')
 		b=self.CParams
-		print 'FIT:\tAmp:%.1fV\tFreq:%.1fHz\tPhase:%.1f\tOffset:%.2fV\tDamping:%.2e'%(b[0],1e6*abs(b[1])/(2*np.pi),b[2]*180/np.pi,b[3],b[4])
-		print '\n'
+		print ('FIT:\tAmp:%.1fV\tFreq:%.1fHz\tPhase:%.1f\tOffset:%.2fV\tDamping:%.2e'%(b[0],1e6*abs(b[1])/(2*np.pi),b[2]*180/np.pi,b[3],b[4]))
+		print ('\n')
 		
 
 

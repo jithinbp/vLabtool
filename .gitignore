@@ -1,0 +1,5 @@
+*~
+*.pyc
+debian
+_build
+.pc

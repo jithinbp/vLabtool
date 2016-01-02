@@ -1,3 +1,4 @@
+from __future__ import print_function
 from numpy import int16
 class HMC5883L():
 	CONFA=0x00
@@ -37,10 +38,10 @@ class HMC5883L():
 		self.name = 'Magnetometer'
 		'''
 		try:
-			print 'switching baud to 400k'
+			print ('switching baud to 400k')
 			self.I2C.configI2C(400e3)
 		except:
-			print 'FAILED TO CHANGE BAUD RATE'
+			print ('FAILED TO CHANGE BAUD RATE')
 		'''
 		self.init('')
 

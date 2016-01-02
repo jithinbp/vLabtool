@@ -4,6 +4,7 @@ oscilloscope for the vLabtool.
 Also includes control widgets, and a logic analyzer
 '''
 
+from __future__ import print_function
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
@@ -20,7 +21,7 @@ import time,sys
 from vLabtool.templates import template_scope
 from vLabtool.customui_rc import *
 
-import sys,os,string
+import sys,os
 import time
 import sys
 
@@ -48,7 +49,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 		if not args.DeviceNumber: args.DeviceNumber=1
 		dv=int(args.DeviceNumber)
 		self.I = interface.Interface()
-		self.setWindowTitle('vLabtool : '+self.I.H.version_string)
+		self.setWindowTitle(u'vLabtool : ' + self.I.H.version_string.decode("utf-8"))
 		
 		self.dacval=0
 
@@ -150,7 +151,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 		self.autoRange()
 		#self.plot.setMouseEnabled(False,True)
 		self.timer = QtCore.QTimer()
-		print 'capturing.',self.I.capture2(4000,3)
+		print ('capturing.',self.I.capture2(4000,3))
 		self.timer.singleShot(500,self.start_capture)
 
 	def updateViews(self):
@@ -162,7 +163,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 
 
 	def blah(self,**args):
-		print args
+		print (args)
 
 	def showgrid(self):
 		return
@@ -199,7 +200,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 			self.timer.singleShot(200,self.start_capture)
 			return
 
-		#print self.get_inductance()
+		#print (self.get_inductance())
 		temperature=self.I.get_temperature()
 		self.plot.setTitle('%0.2f fps, 	%0.1f ^C' % (self.fps,temperature ) )
 		self.channels_in_buffer=self.active_channels
@@ -228,7 +229,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 				trchan = self.LA1_trig.currentText()
 				trmode = self.LA1_trigmode.currentIndex()
 				if(trmode):trmode+=1
-				#print aqchan,aqmode,trchan,trmode
+				#print (aqchan,aqmode,trchan,trmode)
 				if trmode: self.I.start_one_channel_LA(channel=aqchan,channel_mode=aqmode,trigger_channel=trchan,trigger_mode=trmode)
 				else : self.I.start_one_channel_LA(channel=aqchan,channel_mode=aqmode,trigger_mode=0)
 			elif self.active_dchannels==3:
@@ -249,7 +250,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 		n=0
 		while(not self.I.oscilloscope_progress()[0]):
 			time.sleep(0.001)
-			print self.timebase,'correction required',n
+			print (self.timebase,'correction required',n)
 			n+=1
 		if not self.scope_type:	#Analog mode
 			if(self.channels_in_buffer>=1):self.I.__fetch_channel__(1)
@@ -261,7 +262,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 			if len(self.I.dchans[0].timestamps)>2:
 				offset = self.I.dchans[0].timestamps[0]
 				txt = 'CH1: Offset:\t%.3euS\ttimestamps(uS):\t'%(offset/64.)
-				txt += string.join(['%.2e'%(a/64.) for a in (self.I.dchans[0].timestamps[1:4]-offset)],'\t')
+				txt += '\t'.join(['%.2e'%(a/64.) for a in (self.I.dchans[0].timestamps[1:4]-offset)])
 				self.message_label.setText(txt+'...')
 			else:
 				self.message_label.setText('CH1: too few points to display')
@@ -324,7 +325,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 			else:
 				self.curve_lis.clear()
 				self.liss_ready=False
-				#print self.fps,'not available',self.active_channels,self.liss_x,self.liss_y
+				#print (self.fps,'not available',self.active_channels,self.liss_x,self.liss_y)
 		else:
 			self.curve_lis.clear()
 			
@@ -373,7 +374,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 			offset+=OFFSET
 			ph = ((phase)*180/(np.pi))
 			if(frequency<0):
-				#print 'negative frq'
+				#print ('negative frq')
 				return 'fit failed'
 
 			if(amplitude<0):
@@ -385,7 +386,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 			if(frequency):	period = 2*np.pi/frequency
 			else: period = 0
 			pcov[0]*=1e6
-			#print pcov
+			#print (pcov)
 			#return amp,freq,ph,offset,pcov
 			if(abs(pcov[-1][0])>1e-6):
 				if plotnum==1:self.curve_fitL.clear()
@@ -406,7 +407,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 				s=np.argsort(xNew)
 				self.p1 = self.collapse_win.addPlot(title="Collapsing plot: %.1f waveforms collapsed on top of each other"%(xReal[-1]/period), x=xNew[s],y=yNew[s])
 				if(self.collapse_win.windowState() & QtCore.Qt.WindowActive):
-					print 'opened'
+					print ('opened')
 			#------------------------------------------------------
 			
 			if(self.overlay_fit_button.isChecked()):
@@ -464,7 +465,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 	def setTimeBase(self,g):
 		timebases = [1.75,2,4,8,16,32,128,256,512,1024,1024]
 		samplescaling=[1,1,1,1,1,0.5,0.4,0.3,0.2,0.1,0.1]
-		#print g,len(timebases),len(samplescaling)
+		#print (g,len(timebases),len(samplescaling))
 		self.timebase=timebases[g]
 		'''
 		if(self.active_channels==1 and self.timebase<1.0):
@@ -486,7 +487,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 			self.timebase_dial.setValue(0)
 			self.setTimeBase(0)
 			if(frq>1e6):
-				print 'Frequency too high :',frq
+				print ('Frequency too high :',frq)
 		elif frq>2:
 			max_s = self.max_samples_per_channel[self.active_channels]
 			expected_time = 4./frq	#accomodate four wavelengths
@@ -499,10 +500,10 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 				self.samples = max_s
 			self.timebase_label.setValue(self.timebase)
 		else:
-			print 'frequency too low / autoset error'
+			print ('frequency too low / autoset error')
 		self.autoRange()
 			
-		print frq,self.timebase,self.samples
+		print (frq,self.timebase,self.samples)
 
 	def autoSetSamples(self):
 		self.samples = self.max_samples_per_channel[self.active_channels]
@@ -551,7 +552,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 		self.chosa = self.I.__calcCHOSA__(val)
 		self.chan1remap=val
 		chan = self.I.analogInputSources[self.chan1remap]
-		print chan.offsetEnabled,chan.offsetCode
+		print (chan.offsetEnabled,chan.offsetCode)
 		R = [chan.calPoly10(0),chan.calPoly10(1023)]
 		if not chan.offsetEnabled:
 			self.offsetSlider.setEnabled(False)
@@ -626,7 +627,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 		self.liss_win.setWindowTitle('pyqtgraph example: Plotting')
 		self.p1 = self.liss_win.addPlot(title="Lissajous: x:%s , y:%s"%(lissx,lissy), x=self.I.achans[self.liss_x].get_yaxis(),y=self.I.achans[self.liss_y].get_yaxis())
 		if(self.liss_win.windowState() & QtCore.Qt.WindowActive):
-			print 'opened'
+			print ('opened')
 
 	def liss_animate(self,val):
 		if val and self.liss_ready and self.Liss_show.isChecked():
@@ -683,7 +684,7 @@ class MyMainWindow(QtGui.QMainWindow, template_scope.Ui_MainWindow):
 
 	def __del__(self):
 		self.I.H.fd.close()
-		print 'bye'
+		print ('bye')
         		
 if __name__ == "__main__":
 	app = QtGui.QApplication(sys.argv)

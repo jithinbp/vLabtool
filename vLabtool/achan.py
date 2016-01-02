@@ -1,18 +1,20 @@
+from __future__ import print_function
+
 import numpy as np
 TEN_BIT=10
 TWELVE_BIT=12
-print 'LOADING'
+print ('LOADING')
 gains=[1,2,4,5,8,10,16,32]
 '''
 calfacs={}
 try:			#Try and load data from a calibration file
 	from calib_data import calibs
-	print 'found calibs'
-	print calibs.__file__
+	print ('found calibs')
+	print (calibs.__file__)
 	for A in calibs.calibs:
 		calfacs[A] = [np.poly1d(B) for B in calibs.calibs[A]]
 except:			#Give up and use default calibration instead
-	print 'Loading default calibration values'
+	print ('Loading default calibration values')
 	for n in range(2):
 		calfacs['CH'+str(n+1)]=[np.poly1d([ 0,-33/1023./gains[a],16.5/gains[a]]) for a in range(8)] #calibrations for all gains , inv channel
 
@@ -113,22 +115,22 @@ class analogInputSource:
 
 	def setOffset(self,offset):
 		if not	self.offsetEnabled:
-			print 'Offset selection is not available on',self.name
+			print ('Offset selection is not available on',self.name)
 			return False
 		if not(min(self.R) <= offset <= max(self.R)):
-			print 'Offset out of range ',self.R
+			print ('Offset out of range ',self.R)
 			return False
 
 		self.offsetCode=int(4095*(offset-self.R[0])/(self.R[1]-self.R[0]))
 
 		#if self.inverted:self.offsetCode = 4095-self.offsetCode
-		print 'setting offset',offset,self.offsetCode
+		print ('setting offset',offset,self.offsetCode)
 		self.offset=offset
 		self.regenerateCalibration()
 
 	def setGain(self,g):
 		if not	self.gainEnabled:
-			print 'Analog gain is not available on',self.name
+			print ('Analog gain is not available on',self.name)
 			return False
 		self.gain=self.gain_values.index(g)
 		self.regenerateCalibration()
@@ -190,12 +192,12 @@ class analogInputSource:
 '''
 for a in ['CH1']:
 	x=analogInputSource(a)
-	print x.name,x.calPoly10#,calfacs[x.name][0]
-	print 'CAL:',x.calPoly10(0),x.calPoly10(1023)
+	print (x.name,x.calPoly10#,calfacs[x.name][0])
+	print ('CAL:',x.calPoly10(0),x.calPoly10(1023))
 	x.setOffset(1.65)
 	x.setGain(32)
-	print x.name,x.calPoly10#,calfacs[x.name][0]
-	print 'CAL:',x.calPoly10(0),x.calPoly10(1023)
+	print (x.name,x.calPoly10#,calfacs[x.name][0])
+	print ('CAL:',x.calPoly10(0),x.calPoly10(1023))
 '''
 #---------------------------------------------------------------------
 
@@ -242,7 +244,7 @@ class analogAcquisitionChannel:
 		self.name = keys.get('channel',self.channel)	
 		self.source = keys.get('source',self.source)
 		self.resolution = keys.get('resolution',self.resolution)	
-		l = keys.get('length',self.length)	
+		l = keys.get('length',self.length)
 		t = keys.get('timebase',self.timebase)
 		if t != self.timebase or l != self.length:
 			self.timebase = t
@@ -250,10 +252,11 @@ class analogAcquisitionChannel:
 			self.regenerate_xaxis()
 
 	def regenerate_xaxis(self):
-		for a in range(self.length): self.xaxis[a] = self.timebase*a
+                for a in range(int(self.length)):
+                        self.xaxis[a] = self.timebase*a
 
 	def get_xaxis(self):
-		return self.xaxis[:self.length]
+                return self.xaxis[:self.length]
 	def get_yaxis(self):
-		return self.yaxis[:self.length]
+                return self.yaxis[:self.length]
 

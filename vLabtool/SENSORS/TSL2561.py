@@ -1,3 +1,4 @@
+from __future__ import print_function
 '''
 Adapted from https://github.com/janheise/TSL2561
 '''
@@ -55,7 +56,7 @@ class TSL2561:
 
 	def getID(self):
 		ID=self.I2C.readBulk(self.ADDRESS,self.REGISTER_ID ,1)
-		print hex(ID)
+		print (hex(ID))
 		return ID
 	
 	def getRaw(self):
@@ -76,7 +77,7 @@ class TSL2561:
 		self.I2C.writeBulk(self.ADDRESS,[self.COMMAND_BIT | self.REGISTER_TIMING, self.gain | self.timing])
 	
 	def setTiming(self, timing):
-		print [13,101,402][timing],'mS'
+		print ([13,101,402][timing],'mS')
 		self.timing = timing    
 		self.I2C.writeBulk(self.ADDRESS,[self.COMMAND_BIT | self.REGISTER_TIMING, self.gain | self.timing])
 

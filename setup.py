@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 #from distutils.core import setup
 from setuptools import setup, find_packages
 from setuptools.command.install import install
@@ -31,24 +32,33 @@ def check_root():
 
 class CustomInstall(install):
 	def run(self):
-		install_udev_rules(True)
-		install.run(self)
+                if 'debian' in self.root:
+                        try:
+                                os.makedirs(os.path.join(self.root,'lib/udev/rules.d'))
+                        except:
+                                pass
+                        shutil.copy('proto.rules', os.path.join(self.root,'lib/udev/rules.d/99-testbench.rules'))
+                else:                        
+                        install_udev_rules(True)
+                install.run(self)
 
 data_files = []
+
 def subdirs(a_dir):
     return [name for name in os.listdir(a_dir)
             if os.path.isdir(os.path.join(a_dir, name))]
 
-directories=subdirs('vLabtool/helpfiles/')
+directories=subdirs('docs/_build/html/')
 directories.append('')
 for directory in directories:
-	directory = 'vLabtool/helpfiles/'+directory
+	directory = 'docs/_build/html/'+directory
 	files = os.listdir(directory)
 	files = [name for name in files	if not os.path.isdir(os.path.join(directory, name))]
 	files = [os.path.join(directory,a) for a in files]
 	data_files.append((directory,files))
 
-print data_files
+print (data_files)
+
 
 setup(name='vLabtool',
 	version='1.0',

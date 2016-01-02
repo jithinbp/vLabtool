@@ -1,4 +1,5 @@
-from commands_proto import *
+from __future__ import print_function
+from vLabtool.commands_proto import *
 
 class I2C():
 	"""
@@ -7,7 +8,7 @@ class I2C():
 	
 	Example::  Read Values from an HMC5883L 3-axis Magnetometer(compass) [GY-273 sensor] connected to the I2C port
 		>>> ADDRESS = 0x1E
-		>>> from Labtools import interface
+		>>> from vLabtool import interface
 		>>> I = interface.Interface() 
 		>>> # Alternately, you may skip using I2C as a child instance of Interface, 
 		>>> # and instead use I2C=Labtools.I2C_class.I2C(Labtools.packet_handler.Handler())
@@ -22,7 +23,7 @@ class I2C():
 		>>> x=int16((vals[0]<<8)|vals[1])	#conversion to signed datatype
 		>>> y=int16((vals[2]<<8)|vals[3])
 		>>> z=int16((vals[4]<<8)|vals[5])
-		>>> print x,y,z
+		>>> print (x,y,z)
 	
 	"""
 
@@ -64,7 +65,7 @@ class I2C():
 		BRGVAL=int( (1./freq-1./1e7)*64e6-1 )
 		if BRGVAL>511:
 			BRGVAL=511
-			if verbose:print 'Frequency too low. Setting to :',1/((BRGVAL+1.0)/64e6+1.0/1e7)
+			if verbose:print ('Frequency too low. Setting to :',1/((BRGVAL+1.0)/64e6+1.0/1e7))
 		self.H.__sendInt__(BRGVAL) 
 		self.H.__get_ack__()
 
@@ -216,18 +217,19 @@ class I2C():
 
 
 	def readBulk(self,device_address,register_address,bytes_to_read):
-		self.H.__sendByte__(I2C_HEADER)
-		self.H.__sendByte__(I2C_READ_BULK)
-		self.H.__sendByte__(device_address)
-		self.H.__sendByte__(register_address)
-		self.H.__sendByte__(bytes_to_read)
-		data=self.H.fd.read(bytes_to_read)
-		self.H.__get_ack__()
-		try:
-			return [ord(a) for a in data]
-		except:
-			print 'Transaction failed'
-			return False
+                bytes_to_read=int(bytes_to_read)
+                self.H.__sendByte__(I2C_HEADER)
+                self.H.__sendByte__(I2C_READ_BULK)
+                self.H.__sendByte__(device_address)
+                self.H.__sendByte__(register_address)
+                self.H.__sendByte__(bytes_to_read)
+                data=self.H.fd.read(bytes_to_read)
+                self.H.__get_ack__()
+                try:
+                        return [Bytes.unpack(a)[0] for a in data]
+                except:
+                        print ('Transaction failed')
+                        return False
 		
 	def writeBulk(self,device_address,bytestream):
 		self.H.__sendByte__(I2C_HEADER)
@@ -243,13 +245,13 @@ class I2C():
 		addrs=[]
 		n=0
 		if verbose:
-			print 'Scanning addresses 0-127...'
-			print 'Address','\t','Possible Devices'
+			print ('Scanning addresses 0-127...')
+			print ('Address','\t','Possible Devices')
 		for a in range(0,128):
 			x = self.start(a,0)
 			if x&1 == 0:	#ACK received
 				addrs.append(a)
-				if verbose: print hex(a),'\t\t',self.SENSORS.get(a,'None')
+				if verbose: print (hex(a),'\t\t',self.SENSORS.get(a,'None'))
 				n+=1
 			self.stop()
 		return addrs
